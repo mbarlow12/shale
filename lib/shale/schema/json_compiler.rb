@@ -2,6 +2,7 @@
 
 require 'erb'
 require 'uri'
+require 'set'
 
 require_relative '../../shale'
 require_relative 'compiler/boolean'
@@ -70,6 +71,9 @@ module Shale
 
         @root_name = root_name
         @schema_repository = {}
+        @reference_repository = {}
+        @reference_class_repository = {}
+        @enums = Set.new
         @types = []
 
         schemas.each do |schema|
@@ -212,6 +216,9 @@ module Shale
           Compiler::Date.new
         elsif type == 'string' && format == 'date-time'
           Compiler::Time.new
+        elsif type == 'string' && schema.key?['enum']
+          @enums.add(schema['enum'].sort.join(':'))
+          Compiler::String.new
         elsif type == 'string'
           Compiler::String.new
         elsif type == 'number'
@@ -292,6 +299,11 @@ module Shale
           collection = true
           schema = schema['items']
           schema ||= true
+        end
+
+        if schema.is_a?(Hash) && schema.key?('data_type') && schema['data_type'] == 'object_list'
+          collection = true
+          schema = {'type' => 'string'}
         end
 
         if schema.is_a?(Hash) && schema.key?('$ref')
