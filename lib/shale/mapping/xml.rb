@@ -13,25 +13,28 @@ module Shale
       #
       # @param [String] element
       # @param [Symbol, nil] to
+      # @param [Symbol, nil] receiver
       # @param [Hash, nil] using
       # @param [String, nil] namespace
       # @param [String, nil] prefix
       # @param [true, false] cdata
-      # @param [true, false] render_nil
+      # @param [true, false, nil] render_nil
       #
       # @api private
       def map_element(
         element,
         to: nil,
+        receiver: nil,
         using: nil,
         namespace: :undefined,
         prefix: :undefined,
         cdata: false,
-        render_nil: false
+        render_nil: nil
       )
         super(
           element,
           to: to,
+          receiver: receiver,
           using: using,
           namespace: namespace,
           prefix: prefix,
@@ -44,23 +47,26 @@ module Shale
       #
       # @param [String] attribute
       # @param [Symbol, nil] to
+      # @param [Symbol, nil] receiver
       # @param [Hash, nil] using
       # @param [String, nil] namespace
       # @param [String, nil] prefix
-      # @param [true, false] render_nil
+      # @param [true, false, nil] render_nil
       #
       # @api private
       def map_attribute(
         attribute,
         to: nil,
+        receiver: nil,
         using: nil,
         namespace: nil,
         prefix: nil,
-        render_nil: false
+        render_nil: nil
       )
         super(
           attribute,
           to: to,
+          receiver: receiver,
           using: using,
           namespace: namespace,
           prefix: prefix,
@@ -71,12 +77,22 @@ module Shale
       # Map document's content to object's attribute
       #
       # @param [Symbol] to
+      # @param [Symbol, nil] receiver
       # @param [Hash, nil] using
       # @param [true, false] cdata
       #
       # @api private
-      def map_content(to: nil, using: nil, cdata: false)
-        super(to: to, using: using, cdata: cdata)
+      def map_content(to: nil, receiver: nil, using: nil, cdata: false)
+        super(to: to, receiver: receiver, using: using, cdata: cdata)
+      end
+
+      # Set render_nil default
+      #
+      # @param [true, false] val
+      #
+      # @api private
+      def render_nil(val)
+        @render_nil_default = val
       end
 
       # Map group of nodes to mapping methods

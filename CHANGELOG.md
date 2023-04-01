@@ -1,7 +1,26 @@
-## [0.9.0] - [unreleased]
+## [1.0.0] - [unreleased]
 
 ### Added
+- Support for Ruby 3.2
+- Support for delegating fields to nested attributes
+- JSON and XML schema namespace mapping support
+- Allow to set render_nil defaults
+
+### Changed
+- Use `ShaleError` as a base class for exceptions
+- Use model instead of mapper names for schema types
+
+### Fixed
+- Fix compilation error for bundled JSON schemas
+- Fix type inference for XML schema when default namespace is used
+- Fix XML schema handling with a period in the element name
+
+## [0.9.0] - 2022-10-31
+
+### Added
+- Support for CSV
 - Allow to specify version and add encoding to XML declaration
+- Support for mapping/generating collections
 
 ## [0.8.0] - 2022-08-30
 

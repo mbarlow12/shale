@@ -23,6 +23,26 @@ RSpec.describe Shale::Mapping::Xml do
       end
     end
 
+    context 'when :to is nil and :receiver and :using is present' do
+      it 'raises an error' do
+        obj = described_class.new
+
+        expect do
+          obj.map_element('key', to: nil, receiver: :foo, using: {})
+        end.to raise_error(Shale::IncorrectMappingArgumentsError)
+      end
+    end
+
+    context 'when :receiver is not nil' do
+      it 'adds mapping to elements hash' do
+        obj = described_class.new
+        obj.map_element('foo', to: :bar, receiver: :baz)
+
+        expect(obj.elements.keys).to eq(['foo'])
+        expect(obj.elements['foo'].receiver).to eq(:baz)
+      end
+    end
+
     context 'when :using is not nil' do
       context 'when using: { from: } is nil' do
         it 'raises an error' do
@@ -164,6 +184,26 @@ RSpec.describe Shale::Mapping::Xml do
         end
       end
 
+      context 'when :to is nil and :receiver and :using is present' do
+        it 'raises an error' do
+          obj = described_class.new
+
+          expect do
+            obj.map_attribute('key', to: nil, receiver: :foo, using: {})
+          end.to raise_error(Shale::IncorrectMappingArgumentsError)
+        end
+      end
+
+      context 'when :receiver is not nil' do
+        it 'adds mapping to attributes hash' do
+          obj = described_class.new
+          obj.map_attribute('foo', to: :bar, receiver: :baz)
+
+          expect(obj.attributes.keys).to eq(['foo'])
+          expect(obj.attributes['foo'].receiver).to eq(:baz)
+        end
+      end
+
       context 'when using: { to: } is nil' do
         it 'raises an error' do
           obj = described_class.new
@@ -259,6 +299,25 @@ RSpec.describe Shale::Mapping::Xml do
       end
     end
 
+    context 'when :to is nil and :receiver and :using is present' do
+      it 'raises an error' do
+        obj = described_class.new
+
+        expect do
+          obj.map_content(to: nil, receiver: :foo, using: {})
+        end.to raise_error(Shale::IncorrectMappingArgumentsError)
+      end
+    end
+
+    context 'when :receiver is not nil' do
+      it 'adds content mapping' do
+        obj = described_class.new
+        obj.map_content(to: :bar, receiver: :baz)
+
+        expect(obj.content.receiver).to eq(:baz)
+      end
+    end
+
     context 'when :using is not nil' do
       context 'when using: { from: } is nil' do
         it 'raises an error' do
@@ -296,6 +355,18 @@ RSpec.describe Shale::Mapping::Xml do
         obj.map_content(to: :bar, cdata: true)
         expect(obj.content.cdata).to eq(true)
       end
+    end
+  end
+
+  describe '#render_nil' do
+    it 'sets render_nil default' do
+      obj = described_class.new
+      obj.map_element('foo1', to: :foo1)
+      expect(obj.elements['foo1'].render_nil?).to eq(false)
+
+      obj.render_nil(true)
+      obj.map_element('foo2', to: :foo2)
+      expect(obj.elements['foo2'].render_nil?).to eq(true)
     end
   end
 

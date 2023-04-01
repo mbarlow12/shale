@@ -1,18 +1,18 @@
 # Shale
 
-Shale is a Ruby object mapper and serializer for JSON, YAML, TOML and XML.
-It allows you to parse JSON, YAML, TOML and XML data and convert it into Ruby data structures,
-as well as serialize data structures into JSON, YAML, TOML or XML.
+Shale is a Ruby object mapper and serializer for JSON, YAML, TOML, CSV and XML.
+It allows you to parse JSON, YAML, TOML, CSV and XML data and convert it into Ruby data structures,
+as well as serialize data structures into JSON, YAML, TOML, CSV or XML.
 
 Documentation with interactive examples is available at [Shale website](https://www.shalerb.org)
 
 ## Features
 
-* Convert JSON, YAML, TOML and XML to Ruby data model
-* Convert Ruby data model to JSON, YAML, TOML and XML
+* Convert JSON, YAML, TOML, CSV and XML to Ruby data model
+* Convert Ruby data model to JSON, YAML, TOML, CSV and XML
 * Generate JSON and XML Schema from Ruby models
 * Compile JSON and XML Schema into Ruby models
-* Out of the box support for JSON, YAML, Tomlib, toml-rb, Nokogiri, REXML and Ox parsers
+* Out of the box support for JSON, YAML, Tomlib, toml-rb, CSV, Nokogiri, REXML and Ox parsers
 * Support for custom adapters
 
 ## Installation
@@ -51,14 +51,19 @@ $ gem install shale
 * [Converting object to Hash](#converting-object-to-hash)
 * [Converting XML to object](#converting-xml-to-object)
 * [Converting object to XML](#converting-object-to-xml)
+* [Converting CSV to object](#converting-csv-to-object)
+* [Converting object to CSV](#converting-object-to-csv)
+* [Converting collections](#converting-collections)
 * [Mapping JSON keys to object attributes](#mapping-json-keys-to-object-attributes)
 * [Mapping YAML keys to object attributes](#mapping-yaml-keys-to-object-attributes)
 * [Mapping TOML keys to object attributes](#mapping-toml-keys-to-object-attributes)
+* [Mapping CSV columns to object attributes](#mapping-csv-columns-to-object-attributes)
 * [Mapping Hash keys to object attributes](#mapping-hash-keys-to-object-attributes)
 * [Mapping XML elements and attributes to object attributes](#mapping-xml-elements-and-attributes-to-object-attributes)
 * [Using XML namespaces](#using-xml-namespaces)
 * [Rendering nil values](#rendering-nil-values)
 * [Using methods to extract and generate data](#using-methods-to-extract-and-generate-data)
+* [Delegating fields to child attributes](#delegating-fields-to-child-attributes)
 * [Additional options](#additional-options)
 * [Using custom models](#using-custom-models)
 * [Supported types](#supported-types)
@@ -346,6 +351,70 @@ person.to_xml
 # </person>
 ```
 
+### Converting CSV to object
+
+CSV represents a flat data structure, so you can't map properties to complex types directly,
+but you can use methods to map properties to complex types
+(see [Using methods to extract and generate data](#using-methods-to-extract-and-generate-data)
+section).
+
+`.from_csv` method allways returns an array of records.
+
+```ruby
+people = Person.from_csv(<<~DATA)
+John,Doe,50,false
+DATA
+```
+
+### Converting object to CSV
+
+```ruby
+people[0].to_csv # or Person.to_csv(people) if you want to convert a collection
+
+# =>
+#
+# John,Doe,50,false
+```
+
+### Converting collections
+
+Shale allows converting collections for formats that support it (JSON, YAML and CSV).
+To convert Ruby array to JSON:
+
+```ruby
+person1 = Person.new(name: 'John Doe')
+person2 = Person.new(name: 'Joe Sixpack')
+
+Person.to_json([person1, person2], pretty: true)
+# or Person.to_yaml([person1, person2])
+# or Person.to_csv([person1, person2])
+
+# =>
+#
+# [
+#   { "name": "John Doe" },
+#   { "name": "Joe Sixpack" }
+# ]
+```
+
+To convert JSON array to Ruby:
+
+```ruby
+Person.from_json(<<~JSON)
+[
+  { "name": "John Doe" },
+  { "name": "Joe Sixpack" }
+]
+JSON
+
+# =>
+#
+# [
+#   #<Person:0x00000001033dbce8 @name="John Doe">,
+#   #<Person:0x00000001033db4c8 @name="Joe Sixpack">
+# ]
+```
+
 ### Mapping JSON keys to object attributes
 
 By default keys are named the same as attributes. To use custom keys use:
@@ -386,6 +455,24 @@ class Person < Shale::Mapper
   attribute :last_name, Shale::Type::String
 
   toml do
+    map 'firstName', to: :first_name
+    map 'lastName', to: :last_name
+  end
+end
+```
+
+### Mapping CSV columns to object attributes
+
+For CSV the order of mapping matters, the first argument in the `map` method is only
+used as a label in header row. So, in the example below the first column will be mapped
+to `:first_name` attribute and the second column to `:last_name`.
+
+```ruby
+class Person < Shale::Mapper
+  attribute :first_name, Shale::Type::String
+  attribute :last_name, Shale::Type::String
+
+  csv do
     map 'firstName', to: :first_name
     map 'lastName', to: :last_name
   end
@@ -561,8 +648,9 @@ DATA
 
 ### Rendering nil values
 
-By default elements with `nil` value are not rendered. You can change this behavior
-by using `render_nil: true` on a mapping.
+For JSON, YAML, TOML and XML by default, elements with `nil` value are not rendered.
+You can change this behavior by using `render_nil: true` on a mapping.
+For CSV the default is to render `nil` elements.
 
 ```ruby
 class Person < Shale::Mapper
@@ -603,6 +691,49 @@ puts person.to_xml(pretty: true)
 # <person age="">
 #   <first_name/>
 # </person>
+```
+
+If you want to change how nil values are rendered for all mappings you can use `render_nil` method:
+
+```ruby
+class Base < Shale::Mapper
+  json do
+    # change render_nil default for all JSON mappings inheriting from Base class
+    render_nil true
+  end
+end
+
+class Person < Base
+  attribute :first_name, Shale::Type::String
+  attribute :last_name, Shale::Type::String
+  attribute :age, Shale::Type::Integer
+
+  json do
+    # override default from Base class
+    render_nil false
+
+    map 'first_name', to: :first_name
+    map 'last_name', to: :last_name
+    map 'age', to: :age, render_nil: true # override default
+  end
+end
+```
+
+:warning: The default affects only the mappings declared after setting the default value e.g.
+
+```ruby
+class Person < Base
+  attribute :first_name, Shale::Type::String
+  attribute :last_name, Shale::Type::String
+
+  json do
+    render_nil false
+    map 'first_name', to: :first_name # render_nil will be false for this mapping
+
+    render_nil true
+    map 'last_name', to: :last_name # render_nil will be true for this mapping
+  end
+end
 ```
 
 ### Using methods to extract and generate data
@@ -778,6 +909,42 @@ DATA
 # => #<Person:0x00007f9bc3086d60 @name="John Doe">
 ```
 
+### Delegating fields to child attributes
+
+To delegate fields to child complex types you can use `receiver: :child` declaration:
+
+```ruby
+class Address < Shale::Mapper
+  attribute :city, Shale::Type::String
+  attribute :street, Shale::Type::String
+end
+
+class Person < Shale::Mapper
+  attribute :name, Shale::Type::String
+  attribute :address, Address
+
+  json do
+    map 'name', to: :name
+    map 'city', to: :city, receiver: :address
+    map 'street', to: :street, receiver: :address
+  end
+end
+
+person = Person.from_json(<<~DATA)
+{
+  "name": "John Doe",
+  "city": "London",
+  "street": "Oxford Street"
+}
+DATA
+
+# =>
+#
+# #<Person:0x00007f9bc3086d60
+#  @name="John Doe",
+#  @address=#<Address:0x0000000102cbd218 @city="London", @street="Oxford Street">>
+```
+
 ### Additional options
 
 You can control which attributes to render and parse by
@@ -865,6 +1032,38 @@ person.to_xml(pretty: true, declaration: true, encoding: true)
 # <Person>
 #   <Address city="London"/>
 # </Person>
+```
+
+For CSV you can pass `headers: true` to indicate that the first row contains column
+names and shouldn't be included in the returned collection. It also accepts all the options that
+[CSV parser](https://ruby-doc.org/stdlib-3.1.2/libdoc/csv/rdoc/CSV.html#class-CSV-label-Options) accepts.
+
+```ruby
+class Person
+  attribute :first_name, Shale::Type::String
+  attribute :last_name, Shale::Type::String
+end
+
+people = Person.from_csv(<<~DATA, headers: true, col_sep: '|')
+  first_name|last_name
+  John|Doe
+  James|Sixpack
+DATA
+
+# =>
+#
+# [
+#   #<Person:0x0000000113d7a488 @first_name="John", @last_name="Doe">,
+#   #<Person:0x0000000113d7a488 @first_name="James", @last_name="Sixpack">
+# ]
+
+Person.to_csv(people, headers: true, col_sep: '|')
+
+# =>
+#
+# first_name|last_name
+# John|Doe
+# James|Sixpack
 ```
 
 ### Using custom models
@@ -956,10 +1155,10 @@ end
 ### Adapters
 
 Shale uses adapters for parsing and generating documents.
-By default Ruby's standard JSON, YAML parsers are used for handling JSON and YAML documents.
+By default Ruby's standard JSON, YAML, CSV parsers are used for handling JSON YAML, CSV documents.
 
-You can change it by providing your own adapter. For JSON, YAML and TOML, adapter must implement
-`.load` and `.dump` class methods.
+You can change it by providing your own adapter. For JSON, YAML, TOML and CSV adapter must
+implement `.load` and `.dump` class methods.
 
 ```ruby
 require 'shale'
@@ -1093,7 +1292,9 @@ Shale::Schema::JSONGenerator.register_json_type(MyEmailType, MyEmailJSONType)
 
 :warning: Only **[Draft 2020-12](https://json-schema.org/draft/2020-12/schema)** JSON Schema is supported
 
-To generate Shale data model from JSON Schema use:
+To generate Shale data model from JSON Schema use `Shale::Schema.from_json`.
+You can pass `root_name: 'Foobar'` to change the name of the root type and
+`namespace_mapping: {}` to map schemas to Ruby modules:
 
 ```ruby
 require 'shale/schema'
@@ -1104,7 +1305,11 @@ schema = <<~SCHEMA
   "properties": {
     "firstName": { "type": "string" },
     "lastName": { "type": "string" },
-    "address": {
+    "address": { "$ref": "http://bar.com" }
+  },
+  "$defs": {
+    "Address": {
+      "$id": "http://bar.com",
       "type": "object",
       "properties": {
         "street": { "type": "string" },
@@ -1115,38 +1320,53 @@ schema = <<~SCHEMA
 }
 SCHEMA
 
-Shale::Schema.from_json([schema], root_name: 'Person')
+Shale::Schema.from_json(
+  [schema],
+  root_name: 'Person',
+  namespace_mapping: {
+    nil => 'Api::Foo', # default schema (without ID)
+    'http://bar.com' => 'Api::Bar',
+  }
+)
 
 # =>
 #
 # {
-#   "address" => "
+#   "api/bar/address" => "
 #     require 'shale'
 #
-#     class Address < Shale::Mapper
-#       attribute :street, Shale::Type::String
-#       attribute :city, Shale::Type::String
+#     module Api
+#       module Bar
+#         class Address < Shale::Mapper
+#           attribute :street, Shale::Type::String
+#           attribute :city, Shale::Type::String
 #
-#       json do
-#         map 'street', to: :street
-#         map 'city', to: :city
+#           json do
+#             map 'street', to: :street
+#             map 'city', to: :city
+#           end
+#         end
 #       end
 #     end
 #   ",
-#   "person" => "
+#   "api/foo/person" => "
 #     require 'shale'
 #
-#     require_relative 'address'
+#     require_relative '../bar/address'
 #
-#     class Person < Shale::Mapper
-#       attribute :first_name, Shale::Type::String
-#       attribute :last_name, Shale::Type::String
-#       attribute :address, Address
+#     module Api
+#       module Foo
+#         class Person < Shale::Mapper
+#           attribute :first_name, Shale::Type::String
+#           attribute :last_name, Shale::Type::String
+#           attribute :address, Api::Bar::Address
 #
-#       json do
-#         map 'firstName', to: :first_name
-#         map 'lastName', to: :last_name
-#         map 'address', to: :address
+#           json do
+#             map 'firstName', to: :first_name
+#             map 'lastName', to: :last_name
+#             map 'address', to: :address
+#           end
+#         end
 #       end
 #     end
 #   "
@@ -1156,7 +1376,7 @@ Shale::Schema.from_json([schema], root_name: 'Person')
 You can also use a command line tool to do it:
 
 ```
-$ shaleb -c -i schema.json -r Person
+$ shaleb -c -i schema.json -r Person -m http://bar.com=Api::Bar,=Api::Foo
 ```
 
 ### Generating XML Schema
@@ -1227,22 +1447,39 @@ Shale::Schema::XMLGenerator.register_xml_type(MyEmailType, 'myEmailXMLType')
 
 ### Compiling XML Schema into Shale model
 
-To generate Shale data model from XML Schema use:
+To generate Shale data model from XML Schema use `Shale::Schema.from_xml`.
+You can pass `namespace_mapping: {}` to map XML namespaces to Ruby modules:
 
 ```ruby
 require 'shale/schema'
 
-schema = <<~SCHEMA
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+schema1 = <<~SCHEMA
+<xs:schema
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:bar="http://bar.com"
+  elementFormDefault="qualified"
+>
+  <xs:import namespace="http://bar.com" />
+
   <xs:element name="Person" type="Person" />
 
   <xs:complexType name="Person">
     <xs:sequence>
-      <xs:element name="FirstName" type="xs:string" />
-      <xs:element name="LastName" type="xs:string" />
-      <xs:element name="Address" type="Address" />
+      <xs:element name="Name" type="xs:string" />
+      <xs:element ref="bar:Address" />
     </xs:sequence>
   </xs:complexType>
+</xs:schema>
+SCHEMA
+
+schema2 = <<~SCHEMA
+<xs:schema
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:bar="http://bar.com"
+  targetNamespace="http://bar.com"
+  elementFormDefault="qualified"
+>
+  <xs:element name="Address" type="bar:Address" />
 
   <xs:complexType name="Address">
     <xs:sequence>
@@ -1253,42 +1490,55 @@ schema = <<~SCHEMA
 </xs:schema>
 SCHEMA
 
-Shale::Schema.from_xml([schema])
+Shale::Schema.from_xml(
+  [schema1, schema2],
+  namespace_mapping: {
+    nil => 'Api::Foo', # no namespace
+    'http://bar.com' => 'Api::Bar',
+  }
+)
 
 # =>
 #
 # {
-#   "address" => "
+#   "api/bar/address" => "
 #     require 'shale'
 #
-#     class Address < Shale::Mapper
-#       attribute :street, Shale::Type::String
-#       attribute :city, Shale::Type::String
+#     module Api
+#       module Bar
+#         class Address < Shale::Mapper
+#           attribute :street, Shale::Type::String
+#           attribute :city, Shale::Type::String
 #
-#       xml do
-#         root 'Address'
+#           xml do
+#             root 'Address'
+#             namespace 'http://bar.com', 'bar'
 #
-#         map_element 'Street', to: :street
-#         map_element 'City', to: :city
+#             map_element 'Street', to: :street
+#             map_element 'City', to: :city
+#           end
+#         end
 #       end
 #     end
 #   ",
-#   "person" => "
+#   "api/foo/person" => "
 #     require 'shale'
 #
-#     require_relative 'address'
+#     require_relative '../bar/address'
 #
-#     class Person < Shale::Mapper
-#       attribute :first_name, Shale::Type::String
-#       attribute :last_name, Shale::Type::String
-#       attribute :address, Address
+#     module Api
+#       module Foo
+#         class Person < Shale::Mapper
+#           attribute :name, Shale::Type::String
+#           attribute :address, Api::Bar::Address
 #
-#       xml do
-#         root 'Person'
+#           xml do
+#             root 'Person'
 #
-#         map_element 'FirstName', to: :first_name
-#         map_element 'LastName', to: :last_name
-#         map_element 'Address', to: :address
+#             map_element 'Name', to: :name
+#             map_element 'Address', to: :address, prefix: 'bar', namespace: 'http://bar.com'
+#           end
+#         end
 #       end
 #     end
 #   "
@@ -1298,7 +1548,7 @@ Shale::Schema.from_xml([schema])
 You can also use a command line tool to do it:
 
 ```
-$ shaleb -c -f xml -i schema.xml
+$ shaleb -c -f xml -i schema.xml -m http://bar.com=Api::Bar,=Api::Foo
 ```
 
 ## Contributing

@@ -67,18 +67,20 @@ module Shale
         @root = ''
         @default_namespace = Descriptor::XmlNamespace.new
         @finalized = false
+        @render_nil_default = false
       end
 
       # Map element to attribute
       #
       # @param [String] element
       # @param [Symbol, nil] to
+      # @param [Symbol, nil] receiver
       # @param [Hash, nil] using
       # @param [String, nil] group
       # @param [String, nil] namespace
       # @param [String, nil] prefix
       # @param [true, false] cdata
-      # @param [true, false] render_nil
+      # @param [true, false, nil] render_nil
       #
       # @raise [IncorrectMappingArgumentsError] when arguments are incorrect
       #
@@ -86,14 +88,15 @@ module Shale
       def map_element(
         element,
         to: nil,
+        receiver: nil,
         using: nil,
         group: nil,
         namespace: :undefined,
         prefix: :undefined,
         cdata: false,
-        render_nil: false
+        render_nil: nil
       )
-        Validator.validate_arguments(element, to, using)
+        Validator.validate_arguments(element, to, receiver, using)
         Validator.validate_namespace(element, namespace, prefix)
 
         if namespace == :undefined && prefix == :undefined
@@ -109,11 +112,12 @@ module Shale
         @elements[namespaced_element] = Descriptor::Xml.new(
           name: element,
           attribute: to,
+          receiver: receiver,
           methods: using,
           group: group,
           namespace: Descriptor::XmlNamespace.new(nsp, pfx),
           cdata: cdata,
-          render_nil: render_nil
+          render_nil: render_nil.nil? ? @render_nil_default : render_nil
         )
       end
 
@@ -121,10 +125,12 @@ module Shale
       #
       # @param [String] attribute
       # @param [Symbol, nil] to
+      # @param [Symbol, nil] receiver
       # @param [Hash, nil] using
+      # @param [String, nil] group
       # @param [String, nil] namespace
       # @param [String, nil] prefix
-      # @param [true, false] render_nil
+      # @param [true, false, nil] render_nil
       #
       # @raise [IncorrectMappingArgumentsError] when arguments are incorrect
       #
@@ -132,13 +138,14 @@ module Shale
       def map_attribute(
         attribute,
         to: nil,
+        receiver: nil,
         using: nil,
         group: nil,
         namespace: nil,
         prefix: nil,
-        render_nil: false
+        render_nil: nil
       )
-        Validator.validate_arguments(attribute, to, using)
+        Validator.validate_arguments(attribute, to, receiver, using)
         Validator.validate_namespace(attribute, namespace, prefix)
 
         namespaced_attribute = [namespace, attribute].compact.join(':')
@@ -146,27 +153,31 @@ module Shale
         @attributes[namespaced_attribute] = Descriptor::Xml.new(
           name: attribute,
           attribute: to,
+          receiver: receiver,
           methods: using,
           namespace: Descriptor::XmlNamespace.new(namespace, prefix),
           cdata: false,
           group: group,
-          render_nil: render_nil
+          render_nil: render_nil.nil? ? @render_nil_default : render_nil
         )
       end
 
       # Map document's content to object's attribute
       #
       # @param [Symbol] to
+      # @param [Symbol, nil] receiver
       # @param [Hash, nil] using
+      # @param [String, nil] group
       # @param [true, false] cdata
       #
       # @api private
-      def map_content(to: nil, using: nil, group: nil, cdata: false)
-        Validator.validate_arguments('content', to, using)
+      def map_content(to: nil, receiver: nil, using: nil, group: nil, cdata: false)
+        Validator.validate_arguments('content', to, receiver, using)
 
         @content = Descriptor::Xml.new(
           name: nil,
           attribute: to,
+          receiver: receiver,
           methods: using,
           namespace: Descriptor::XmlNamespace.new(nil, nil),
           cdata: cdata,
@@ -215,8 +226,6 @@ module Shale
       def initialize_dup(other)
         @elements = other.instance_variable_get('@elements').dup
         @attributes = other.instance_variable_get('@attributes').dup
-        @content = other.instance_variable_get('@content').dup
-        @root = other.instance_variable_get('@root').dup
         @default_namespace = other.instance_variable_get('@default_namespace').dup
         @finalized = false
 
