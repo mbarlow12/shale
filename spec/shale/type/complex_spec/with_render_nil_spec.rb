@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-require 'shale'
-require 'shale/adapter/rexml'
+require 'fido'
+require 'fido/adapter/rexml'
 require 'tomlib'
 
 module ComplexSpec__RenderNil # rubocop:disable Naming/ClassAndModuleCamelCase
-  class RenderNilDict < Shale::Mapper
-    attribute :attr_true, Shale::Type::String
-    attribute :attr_false, Shale::Type::String
+  class RenderNilDict < Fido::Mapper
+    attribute :attr_true, Fido::Type::String
+    attribute :attr_false, Fido::Type::String
 
     hsh do
       map 'attr_true', to: :attr_true, render_nil: true
@@ -35,16 +35,16 @@ module ComplexSpec__RenderNil # rubocop:disable Naming/ClassAndModuleCamelCase
     end
   end
 
-  class RenderNilXml < Shale::Mapper
-    attribute :attr_true, Shale::Type::String
-    attribute :attr_false, Shale::Type::String
-    attribute :element_true, Shale::Type::String
-    attribute :element_false, Shale::Type::String
+  class RenderNilXml < Fido::Mapper
+    attribute :attr_true, Fido::Type::String
+    attribute :attr_false, Fido::Type::String
+    attribute :element_true, Fido::Type::String
+    attribute :element_false, Fido::Type::String
 
-    attribute :ns_attr_true, Shale::Type::String
-    attribute :ns_attr_false, Shale::Type::String
-    attribute :ns_element_true, Shale::Type::String
-    attribute :ns_element_false, Shale::Type::String
+    attribute :ns_attr_true, Fido::Type::String
+    attribute :ns_attr_false, Fido::Type::String
+    attribute :ns_element_true, Fido::Type::String
+    attribute :ns_element_false, Fido::Type::String
 
     xml do
       root 'render_nil'
@@ -69,13 +69,13 @@ module ComplexSpec__RenderNil # rubocop:disable Naming/ClassAndModuleCamelCase
   end
 end
 
-RSpec.describe Shale::Type::Complex do
+RSpec.describe Fido::Type::Complex do
   before(:each) do
-    Shale.json_adapter = Shale::Adapter::JSON
-    Shale.yaml_adapter = YAML
-    Shale.toml_adapter = Tomlib
-    Shale.csv_adapter = Shale::Adapter::CSV
-    Shale.xml_adapter = Shale::Adapter::REXML
+    Fido.json_adapter = Fido::Adapter::JSON
+    Fido.yaml_adapter = YAML
+    Fido.toml_adapter = Tomlib
+    Fido.csv_adapter = Fido::Adapter::CSV
+    Fido.xml_adapter = Fido::Adapter::REXML
   end
 
   let(:mapper) { ComplexSpec__RenderNil::RenderNilDict }

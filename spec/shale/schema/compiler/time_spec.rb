@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-require 'shale/schema/compiler/time'
+require 'fido/schema/compiler/time'
 
-RSpec.describe Shale::Schema::Compiler::Time do
+RSpec.describe Fido::Schema::Compiler::Time do
   describe '#name' do
-    it 'returns Shale type name' do
-      expect(described_class.new.name).to eq('Shale::Type::Time')
+    it 'returns Fido type name' do
+      expect(described_class.new.name).to eq('Fido::Type::Time')
     end
   end
 end

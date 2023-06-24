@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-require 'shale/schema/compiler/complex'
-require 'shale/schema/compiler/property'
-require 'shale/schema/compiler/value'
+require 'fido/schema/compiler/complex'
+require 'fido/schema/compiler/property'
+require 'fido/schema/compiler/value'
 
-RSpec.describe Shale::Schema::Compiler::Complex do
-  let(:type) { Shale::Schema::Compiler::Value.new }
+RSpec.describe Fido::Schema::Compiler::Complex do
+  let(:type) { Fido::Schema::Compiler::Value.new }
 
   describe '#id' do
     it 'returns value' do
@@ -16,7 +16,7 @@ RSpec.describe Shale::Schema::Compiler::Complex do
 
   describe '#properties' do
     it 'returns value' do
-      property = Shale::Schema::Compiler::Property.new('fooBar', type, false, nil)
+      property = Fido::Schema::Compiler::Property.new('fooBar', type, false, nil)
 
       complex = described_class.new('foobar-id', 'foobar', nil)
       complex.add_property(property)
@@ -139,13 +139,13 @@ RSpec.describe Shale::Schema::Compiler::Complex do
 
   describe '#references' do
     it 'returns properties with Complex type' do
-      property1 = Shale::Schema::Compiler::Property.new('fooBar1', type, false, nil)
+      property1 = Fido::Schema::Compiler::Property.new('fooBar1', type, false, nil)
 
       complex1 = described_class.new('id1', 'foo1', nil)
-      property2 = Shale::Schema::Compiler::Property.new('fooBar2', complex1, false, nil)
+      property2 = Fido::Schema::Compiler::Property.new('fooBar2', complex1, false, nil)
 
       complex = described_class.new('id', 'foo', nil)
-      property3 = Shale::Schema::Compiler::Property.new('fooBar2', complex, false, nil)
+      property3 = Fido::Schema::Compiler::Property.new('fooBar2', complex, false, nil)
 
       complex.add_property(property1)
       complex.add_property(property2)
@@ -159,16 +159,16 @@ RSpec.describe Shale::Schema::Compiler::Complex do
       complex = described_class.new('id', 'foo', nil)
 
       complex1 = described_class.new('id1', 'a', nil)
-      property1 = Shale::Schema::Compiler::Property.new('prop1', complex1, false, nil)
+      property1 = Fido::Schema::Compiler::Property.new('prop1', complex1, false, nil)
 
       complex2 = described_class.new('id2', 'b', nil)
-      property2 = Shale::Schema::Compiler::Property.new('prop2', complex2, false, nil)
+      property2 = Fido::Schema::Compiler::Property.new('prop2', complex2, false, nil)
 
       complex3 = described_class.new('id3', 'c', nil)
-      property3 = Shale::Schema::Compiler::Property.new('prop3', complex3, false, nil)
+      property3 = Fido::Schema::Compiler::Property.new('prop3', complex3, false, nil)
 
       complex4 = described_class.new('id4', 'd', nil)
-      property4 = Shale::Schema::Compiler::Property.new('prop4', complex4, false, nil)
+      property4 = Fido::Schema::Compiler::Property.new('prop4', complex4, false, nil)
 
       complex.add_property(property2)
       complex.add_property(property1)
@@ -182,12 +182,12 @@ RSpec.describe Shale::Schema::Compiler::Complex do
       complex = described_class.new('id', 'foo', nil)
 
       complex1 = described_class.new('id1', 'a', nil)
-      property1 = Shale::Schema::Compiler::Property.new('prop1', complex1, false, nil)
-      property2 = Shale::Schema::Compiler::Property.new('prop2', complex1, false, nil)
+      property1 = Fido::Schema::Compiler::Property.new('prop1', complex1, false, nil)
+      property2 = Fido::Schema::Compiler::Property.new('prop2', complex1, false, nil)
 
       complex2 = described_class.new('id2', 'b', nil)
-      property3 = Shale::Schema::Compiler::Property.new('prop3', complex2, false, nil)
-      property4 = Shale::Schema::Compiler::Property.new('prop4', complex2, false, nil)
+      property3 = Fido::Schema::Compiler::Property.new('prop3', complex2, false, nil)
+      property4 = Fido::Schema::Compiler::Property.new('prop4', complex2, false, nil)
 
       complex.add_property(property2)
       complex.add_property(property1)
@@ -201,8 +201,8 @@ RSpec.describe Shale::Schema::Compiler::Complex do
   describe '#add_property' do
     context 'when property with given name is not present' do
       it 'adds property' do
-        property1 = Shale::Schema::Compiler::Property.new('fooBar1', type, false, nil)
-        property2 = Shale::Schema::Compiler::Property.new('fooBar2', type, false, nil)
+        property1 = Fido::Schema::Compiler::Property.new('fooBar1', type, false, nil)
+        property2 = Fido::Schema::Compiler::Property.new('fooBar2', type, false, nil)
 
         complex = described_class.new('foobar-id', 'foobar', nil)
         expect(complex.properties.length).to eq(0)
@@ -217,8 +217,8 @@ RSpec.describe Shale::Schema::Compiler::Complex do
 
     context 'when proeprty with given name is already present' do
       it 'adds property' do
-        property1 = Shale::Schema::Compiler::Property.new('fooBar1', type, false, nil)
-        property2 = Shale::Schema::Compiler::Property.new('fooBar1', type, false, nil)
+        property1 = Fido::Schema::Compiler::Property.new('fooBar1', type, false, nil)
+        property2 = Fido::Schema::Compiler::Property.new('fooBar1', type, false, nil)
 
         complex = described_class.new('foobar-id', 'foobar', nil)
         expect(complex.properties.length).to eq(0)

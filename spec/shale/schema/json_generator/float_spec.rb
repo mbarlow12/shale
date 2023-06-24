@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'shale/schema/json_generator/float'
+require 'fido/schema/json_generator/float'
 
-RSpec.describe Shale::Schema::JSONGenerator::Float do
+RSpec.describe Fido::Schema::JSONGenerator::Float do
   describe '#as_type' do
     it 'returns JSON Schema fragment as Hash' do
       expected = { 'type' => 'number' }

@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 require 'nokogiri'
-require 'shale/adapter/nokogiri/node'
+require 'fido/adapter/nokogiri/node'
 
-RSpec.describe Shale::Adapter::Nokogiri::Node do
+RSpec.describe Fido::Adapter::Nokogiri::Node do
   describe '#namespaces' do
     context 'without namespaces' do
       it 'returns empty hash' do

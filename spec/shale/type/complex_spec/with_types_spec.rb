@@ -1,37 +1,37 @@
 # frozen_string_literal: true
 
-require 'shale'
-require 'shale/adapter/rexml'
+require 'fido'
+require 'fido/adapter/rexml'
 require 'tomlib'
 
 module ComplexSpec__Types # rubocop:disable Naming/ClassAndModuleCamelCase
-  class Child < Shale::Mapper
-    attribute :type_boolean, Shale::Type::Boolean
-    attribute :type_date, Shale::Type::Date
-    attribute :type_float, Shale::Type::Float
-    attribute :type_integer, Shale::Type::Integer
-    attribute :type_string, Shale::Type::String
-    attribute :type_time, Shale::Type::Time
-    attribute :type_value, Shale::Type::Value
+  class Child < Fido::Mapper
+    attribute :type_boolean, Fido::Type::Boolean
+    attribute :type_date, Fido::Type::Date
+    attribute :type_float, Fido::Type::Float
+    attribute :type_integer, Fido::Type::Integer
+    attribute :type_string, Fido::Type::String
+    attribute :type_time, Fido::Type::Time
+    attribute :type_value, Fido::Type::Value
   end
 
-  class Root < Shale::Mapper
-    attribute :type_boolean, Shale::Type::Boolean
-    attribute :type_date, Shale::Type::Date
-    attribute :type_float, Shale::Type::Float
-    attribute :type_integer, Shale::Type::Integer
-    attribute :type_string, Shale::Type::String
-    attribute :type_time, Shale::Type::Time
-    attribute :type_value, Shale::Type::Value
+  class Root < Fido::Mapper
+    attribute :type_boolean, Fido::Type::Boolean
+    attribute :type_date, Fido::Type::Date
+    attribute :type_float, Fido::Type::Float
+    attribute :type_integer, Fido::Type::Integer
+    attribute :type_string, Fido::Type::String
+    attribute :type_time, Fido::Type::Time
+    attribute :type_value, Fido::Type::Value
     attribute :child, Child
 
-    attribute :type_boolean_collection, Shale::Type::Boolean, collection: true
-    attribute :type_date_collection, Shale::Type::Date, collection: true
-    attribute :type_float_collection, Shale::Type::Float, collection: true
-    attribute :type_integer_collection, Shale::Type::Integer, collection: true
-    attribute :type_string_collection, Shale::Type::String, collection: true
-    attribute :type_time_collection, Shale::Type::Time, collection: true
-    attribute :type_value_collection, Shale::Type::Value, collection: true
+    attribute :type_boolean_collection, Fido::Type::Boolean, collection: true
+    attribute :type_date_collection, Fido::Type::Date, collection: true
+    attribute :type_float_collection, Fido::Type::Float, collection: true
+    attribute :type_integer_collection, Fido::Type::Integer, collection: true
+    attribute :type_string_collection, Fido::Type::String, collection: true
+    attribute :type_time_collection, Fido::Type::Time, collection: true
+    attribute :type_value_collection, Fido::Type::Value, collection: true
     attribute :child_collection, Child, collection: true
 
     csv do
@@ -46,13 +46,13 @@ module ComplexSpec__Types # rubocop:disable Naming/ClassAndModuleCamelCase
   end
 end
 
-RSpec.describe Shale::Type::Complex do
+RSpec.describe Fido::Type::Complex do
   before(:each) do
-    Shale.json_adapter = Shale::Adapter::JSON
-    Shale.yaml_adapter = YAML
-    Shale.toml_adapter = Tomlib
-    Shale.csv_adapter = Shale::Adapter::CSV
-    Shale.xml_adapter = Shale::Adapter::REXML
+    Fido.json_adapter = Fido::Adapter::JSON
+    Fido.yaml_adapter = YAML
+    Fido.toml_adapter = Tomlib
+    Fido.csv_adapter = Fido::Adapter::CSV
+    Fido.xml_adapter = Fido::Adapter::REXML
   end
 
   let(:mapper) { ComplexSpec__Types::Root }

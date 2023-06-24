@@ -1,24 +1,24 @@
 # frozen_string_literal: true
 
-require 'shale/adapter/json'
-require 'shale/adapter/rexml'
-require 'shale/schema'
+require 'fido/adapter/json'
+require 'fido/adapter/rexml'
+require 'fido/schema'
 
-module ShaleSchemaTesting
-  class Root < Shale::Mapper
-    attribute :foo, Shale::Type::String
+module FidoSchemaTesting
+  class Root < Fido::Mapper
+    attribute :foo, Fido::Type::String
   end
 end
 
-RSpec.describe Shale::Schema do
+RSpec.describe Fido::Schema do
   describe '.to_json' do
     let(:expected_json_schema) do
       <<~DATA.gsub(/\n\z/, '')
         {
           "$schema": "https://json-schema.org/draft/2020-12/schema",
-          "$ref": "#/$defs/ShaleSchemaTesting_Root",
+          "$ref": "#/$defs/FidoSchemaTesting_Root",
           "$defs": {
-            "ShaleSchemaTesting_Root": {
+            "FidoSchemaTesting_Root": {
               "type": "object",
               "properties": {
                 "foo": {
@@ -35,8 +35,8 @@ RSpec.describe Shale::Schema do
     end
 
     it 'generates JSON schema' do
-      Shale.json_adapter = Shale::Adapter::JSON
-      schema = described_class.to_json(ShaleSchemaTesting::Root, pretty: true)
+      Fido.json_adapter = Fido::Adapter::JSON
+      schema = described_class.to_json(FidoSchemaTesting::Root, pretty: true)
       expect(schema).to eq(expected_json_schema)
     end
   end
@@ -54,12 +54,12 @@ RSpec.describe Shale::Schema do
         DATA
       end
 
-      let(:expected_shale_model) do
+      let(:expected_fido_model) do
         <<~DATA
-          require 'shale'
+          require 'fido'
 
-          class Foo < Shale::Mapper
-            attribute :name, Shale::Type::String
+          class Foo < Fido::Mapper
+            attribute :name, Fido::Type::String
 
             json do
               map 'name', to: :name
@@ -68,11 +68,11 @@ RSpec.describe Shale::Schema do
         DATA
       end
 
-      it 'generates Shale models' do
-        Shale.json_adapter = Shale::Adapter::JSON
+      it 'generates Fido models' do
+        Fido.json_adapter = Fido::Adapter::JSON
         models = described_class.from_json([schema], root_name: 'foo')
         expect(models.length).to eq(1)
-        expect(models).to eq({ 'foo' => expected_shale_model })
+        expect(models).to eq({ 'foo' => expected_fido_model })
       end
     end
 
@@ -104,12 +104,12 @@ RSpec.describe Shale::Schema do
 
       let(:expected_person) do
         <<~DATA
-          require 'shale'
+          require 'fido'
 
           require_relative '../bar/address'
 
           module Foo
-            class Person < Shale::Mapper
+            class Person < Fido::Mapper
               attribute :address, Bar::Address
 
               json do
@@ -122,11 +122,11 @@ RSpec.describe Shale::Schema do
 
       let(:expected_address) do
         <<~DATA
-          require 'shale'
+          require 'fido'
 
           module Bar
-            class Address < Shale::Mapper
-              attribute :city, Shale::Type::String
+            class Address < Fido::Mapper
+              attribute :city, Fido::Type::String
 
               json do
                 map 'city', to: :city
@@ -136,8 +136,8 @@ RSpec.describe Shale::Schema do
         DATA
       end
 
-      it 'generates Shale models' do
-        Shale.json_adapter = Shale::Adapter::JSON
+      it 'generates Fido models' do
+        Fido.json_adapter = Fido::Adapter::JSON
         models = described_class.from_json(
           [schema],
           root_name: 'Person',
@@ -157,8 +157,8 @@ RSpec.describe Shale::Schema do
     let(:expected_xml_schema) do
       schema = <<~DATA.gsub(/\n\z/, '')
         <xs:schema elementFormDefault="qualified" attributeFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-          <xs:element name="root" type="ShaleSchemaTesting_Root"/>
-          <xs:complexType name="ShaleSchemaTesting_Root">
+          <xs:element name="root" type="FidoSchemaTesting_Root"/>
+          <xs:complexType name="FidoSchemaTesting_Root">
             <xs:sequence>
               <xs:element name="foo" type="xs:string" minOccurs="0"/>
             </xs:sequence>
@@ -170,8 +170,8 @@ RSpec.describe Shale::Schema do
     end
 
     it 'generates XML schema' do
-      Shale.xml_adapter = Shale::Adapter::REXML
-      schemas = described_class.to_xml(ShaleSchemaTesting::Root, pretty: true)
+      Fido.xml_adapter = Fido::Adapter::REXML
+      schemas = described_class.to_xml(FidoSchemaTesting::Root, pretty: true)
       expect(schemas).to eq(expected_xml_schema)
     end
   end
@@ -196,8 +196,8 @@ RSpec.describe Shale::Schema do
         SCHEMA
       end
 
-      it 'generates Shale models' do
-        Shale.xml_adapter = Shale::Adapter::REXML
+      it 'generates Fido models' do
+        Fido.xml_adapter = Fido::Adapter::REXML
         models = described_class.from_xml([schema],
           namespace_mapping: { 'foo' => 'Namespace' })
         expect(models.keys).to include('namespace/invoice_item')
@@ -220,12 +220,12 @@ RSpec.describe Shale::Schema do
         DATA
       end
 
-      let(:expected_shale_model) do
+      let(:expected_fido_model) do
         <<~DATA
-          require 'shale'
+          require 'fido'
 
-          class Foo < Shale::Mapper
-            attribute :name, Shale::Type::String
+          class Foo < Fido::Mapper
+            attribute :name, Fido::Type::String
 
             xml do
               root 'foo'
@@ -236,11 +236,11 @@ RSpec.describe Shale::Schema do
         DATA
       end
 
-      it 'generates Shale models' do
-        Shale.xml_adapter = Shale::Adapter::REXML
+      it 'generates Fido models' do
+        Fido.xml_adapter = Fido::Adapter::REXML
         models = described_class.from_xml([schema])
         expect(models.length).to eq(1)
-        expect(models).to eq({ 'foo' => expected_shale_model })
+        expect(models).to eq({ 'foo' => expected_fido_model })
       end
     end
 
@@ -292,12 +292,12 @@ RSpec.describe Shale::Schema do
 
       let(:expected_person) do
         <<~DATA
-          require 'shale'
+          require 'fido'
 
           require_relative '../bar/address'
 
           module Foo
-            class Person < Shale::Mapper
+            class Person < Fido::Mapper
               attribute :address, Bar::Address
 
               xml do
@@ -313,11 +313,11 @@ RSpec.describe Shale::Schema do
 
       let(:expected_address) do
         <<~DATA
-          require 'shale'
+          require 'fido'
 
           module Bar
-            class Address < Shale::Mapper
-              attribute :city, Shale::Type::String
+            class Address < Fido::Mapper
+              attribute :city, Fido::Type::String
 
               xml do
                 root 'Address'
@@ -330,8 +330,8 @@ RSpec.describe Shale::Schema do
         DATA
       end
 
-      it 'generates Shale models' do
-        Shale.xml_adapter = Shale::Adapter::REXML
+      it 'generates Fido models' do
+        Fido.xml_adapter = Fido::Adapter::REXML
         models = described_class.from_xml([schema1, schema2], namespace_mapping: mapping)
         expect(models.length).to eq(2)
         expect(models).to eq({

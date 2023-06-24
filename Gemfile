@@ -4,6 +4,7 @@ source 'https://rubygems.org'
 
 gemspec
 
+gem "dry-types", "~> 1.7"
 gem 'rake', '~> 13.0'
 gem 'rubocop', '~> 1.43'
 
@@ -17,3 +18,4 @@ group :test do
   gem 'rspec', '~> 3.12.0'
   gem 'simplecov', '~> 0.22.0', require: false
 end
+

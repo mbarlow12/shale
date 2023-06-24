@@ -1,21 +1,21 @@
 # frozen_string_literal: true
 
-require 'shale/mapper'
-require 'shale/type/string'
-require 'shale/type/integer'
+require 'fido/mapper'
+require 'fido/type/string'
+require 'fido/type/integer'
 
-module ShaleMapperTesting
+module FidoMapperTesting
   BAR_DEFAULT_PROC = -> { 'bar' }
 
-  class Parent < Shale::Mapper
-    attribute :foo, Shale::Type::String
-    attribute :bar, Shale::Type::String, default: BAR_DEFAULT_PROC
-    attribute :baz, Shale::Type::String, collection: true
-    attribute :foo_int, Shale::Type::Integer
+  class Parent < Fido::Mapper
+    attribute :foo, Fido::Type::String
+    attribute :bar, Fido::Type::String, default: BAR_DEFAULT_PROC
+    attribute :baz, Fido::Type::String, collection: true
+    attribute :foo_int, Fido::Type::Integer
   end
 
   class Child1 < Parent
-    attribute :child1_foo, Shale::Type::String
+    attribute :child1_foo, Fido::Type::String
 
     # rubocop:disable Lint/EmptyBlock
     hsh do
@@ -39,11 +39,11 @@ module ShaleMapperTesting
   end
 
   class Child2 < Child1
-    attribute :child2_foo, Shale::Type::String
+    attribute :child2_foo, Fido::Type::String
   end
 
   class Child3 < Child2
-    attribute :child3_foo, Shale::Type::String
+    attribute :child3_foo, Fido::Type::String
 
     hsh do
       map 'child3_bar', to: :child3_foo
@@ -71,8 +71,8 @@ module ShaleMapperTesting
     end
   end
 
-  class HashMapping < Shale::Mapper
-    attribute :foo, Shale::Type::String
+  class HashMapping < Fido::Mapper
+    attribute :foo, Fido::Type::String
 
     hsh do
       map 'bar', to: :foo
@@ -83,8 +83,8 @@ module ShaleMapperTesting
     end
   end
 
-  class JsonMapping < Shale::Mapper
-    attribute :foo, Shale::Type::String
+  class JsonMapping < Fido::Mapper
+    attribute :foo, Fido::Type::String
 
     json do
       map 'bar', to: :foo
@@ -95,8 +95,8 @@ module ShaleMapperTesting
     end
   end
 
-  class YamlMapping < Shale::Mapper
-    attribute :foo, Shale::Type::String
+  class YamlMapping < Fido::Mapper
+    attribute :foo, Fido::Type::String
 
     yaml do
       map 'bar', to: :foo
@@ -107,8 +107,8 @@ module ShaleMapperTesting
     end
   end
 
-  class TomlMapping < Shale::Mapper
-    attribute :foo, Shale::Type::String
+  class TomlMapping < Fido::Mapper
+    attribute :foo, Fido::Type::String
 
     toml do
       map 'bar', to: :foo
@@ -119,8 +119,8 @@ module ShaleMapperTesting
     end
   end
 
-  class CsvMapping < Shale::Mapper
-    attribute :foo, Shale::Type::String
+  class CsvMapping < Fido::Mapper
+    attribute :foo, Fido::Type::String
 
     csv do
       map 'bar', to: :foo
@@ -131,11 +131,11 @@ module ShaleMapperTesting
     end
   end
 
-  class XmlMapping < Shale::Mapper
-    attribute :foo_element, Shale::Type::String
-    attribute :ns2_element, Shale::Type::String
-    attribute :foo_attribute, Shale::Type::String
-    attribute :foo_content, Shale::Type::String
+  class XmlMapping < Fido::Mapper
+    attribute :foo_element, Fido::Type::String
+    attribute :ns2_element, Fido::Type::String
+    attribute :foo_attribute, Fido::Type::String
+    attribute :foo_content, Fido::Type::String
 
     xml do
       root 'foobar'
@@ -151,7 +151,7 @@ module ShaleMapperTesting
     end
   end
 
-  class MapperWithouModel < Shale::Mapper
+  class MapperWithouModel < Fido::Mapper
   end
 
   # rubocop:disable Lint/EmptyClass
@@ -159,13 +159,13 @@ module ShaleMapperTesting
   end
   # rubocop:enable Lint/EmptyClass
 
-  class MapperWithModel < Shale::Mapper
+  class MapperWithModel < Fido::Mapper
     model Model
   end
 
   # rubocop:disable Lint/EmptyBlock
-  class FinalizedParent1 < Shale::Mapper
-    attribute :one, Shale::Type::String
+  class FinalizedParent1 < Fido::Mapper
+    attribute :one, Fido::Type::String
 
     hsh do
     end
@@ -186,7 +186,7 @@ module ShaleMapperTesting
     end
   end
 
-  class FinalizedParent2 < Shale::Mapper
+  class FinalizedParent2 < Fido::Mapper
     hsh do
     end
 
@@ -205,20 +205,20 @@ module ShaleMapperTesting
     xml do
     end
 
-    attribute :one, Shale::Type::String
+    attribute :one, Fido::Type::String
   end
   # rubocop:enable Lint/EmptyBlock
 
   class FinalizedChild1 < FinalizedParent1
-    attribute :two, Shale::Type::String
+    attribute :two, Fido::Type::String
   end
 
   class FinalizedChild2 < FinalizedParent2
-    attribute :two, Shale::Type::String
+    attribute :two, Fido::Type::String
   end
 
-  class AttributesModuleParent < Shale::Mapper
-    attribute :parent, Shale::Type::String
+  class AttributesModuleParent < Fido::Mapper
+    attribute :parent, Fido::Type::String
 
     def parent
       "#{super}!"
@@ -230,7 +230,7 @@ module ShaleMapperTesting
   end
 
   class AttributesModuleChild < AttributesModuleParent
-    attribute :child, Shale::Type::String
+    attribute :child, Fido::Type::String
 
     def parent
       "#{super}?"
@@ -250,38 +250,38 @@ module ShaleMapperTesting
   end
 end
 
-RSpec.describe Shale::Mapper do
+RSpec.describe Fido::Mapper do
   describe '.inherited' do
     it 'copies attributes from parent' do
-      mapping = ShaleMapperTesting::Parent.attributes.keys
+      mapping = FidoMapperTesting::Parent.attributes.keys
       expect(mapping).to eq(%i[foo bar baz foo_int])
 
-      mapping = ShaleMapperTesting::Child1.attributes.keys
+      mapping = FidoMapperTesting::Child1.attributes.keys
       expect(mapping).to eq(%i[foo bar baz foo_int child1_foo])
 
-      mapping = ShaleMapperTesting::Child2.attributes.keys
+      mapping = FidoMapperTesting::Child2.attributes.keys
       expect(mapping).to eq(%i[foo bar baz foo_int child1_foo child2_foo])
 
-      mapping = ShaleMapperTesting::Child3.attributes.keys
+      mapping = FidoMapperTesting::Child3.attributes.keys
       expect(mapping).to eq(%i[foo bar baz foo_int child1_foo child2_foo child3_foo])
     end
 
     it 'copies hash_mapping from parent' do
-      mapping = ShaleMapperTesting::Parent.hash_mapping.keys
+      mapping = FidoMapperTesting::Parent.hash_mapping.keys
       expect(mapping.keys).to eq(%w[foo bar baz foo_int])
       expect(mapping['foo'].attribute).to eq(:foo)
       expect(mapping['bar'].attribute).to eq(:bar)
       expect(mapping['baz'].attribute).to eq(:baz)
       expect(mapping['foo_int'].attribute).to eq(:foo_int)
 
-      mapping = ShaleMapperTesting::Child1.hash_mapping.keys
+      mapping = FidoMapperTesting::Child1.hash_mapping.keys
       expect(mapping.keys).to eq(%w[foo bar baz foo_int])
       expect(mapping['foo'].attribute).to eq(:foo)
       expect(mapping['bar'].attribute).to eq(:bar)
       expect(mapping['baz'].attribute).to eq(:baz)
       expect(mapping['foo_int'].attribute).to eq(:foo_int)
 
-      mapping = ShaleMapperTesting::Child2.hash_mapping.keys
+      mapping = FidoMapperTesting::Child2.hash_mapping.keys
       expect(mapping.keys).to eq(%w[foo bar baz foo_int child2_foo])
       expect(mapping['foo'].attribute).to eq(:foo)
       expect(mapping['bar'].attribute).to eq(:bar)
@@ -289,7 +289,7 @@ RSpec.describe Shale::Mapper do
       expect(mapping['foo_int'].attribute).to eq(:foo_int)
       expect(mapping['child2_foo'].attribute).to eq(:child2_foo)
 
-      mapping = ShaleMapperTesting::Child3.hash_mapping.keys
+      mapping = FidoMapperTesting::Child3.hash_mapping.keys
       expect(mapping.keys).to eq(%w[foo bar baz foo_int child2_foo child3_bar])
       expect(mapping['foo'].attribute).to eq(:foo)
       expect(mapping['bar'].attribute).to eq(:bar)
@@ -300,21 +300,21 @@ RSpec.describe Shale::Mapper do
     end
 
     it 'copies json_mapping from parent' do
-      mapping = ShaleMapperTesting::Parent.json_mapping.keys
+      mapping = FidoMapperTesting::Parent.json_mapping.keys
       expect(mapping.keys).to eq(%w[foo bar baz foo_int])
       expect(mapping['foo'].attribute).to eq(:foo)
       expect(mapping['bar'].attribute).to eq(:bar)
       expect(mapping['baz'].attribute).to eq(:baz)
       expect(mapping['foo_int'].attribute).to eq(:foo_int)
 
-      mapping = ShaleMapperTesting::Child1.json_mapping.keys
+      mapping = FidoMapperTesting::Child1.json_mapping.keys
       expect(mapping.keys).to eq(%w[foo bar baz foo_int])
       expect(mapping['foo'].attribute).to eq(:foo)
       expect(mapping['bar'].attribute).to eq(:bar)
       expect(mapping['baz'].attribute).to eq(:baz)
       expect(mapping['foo_int'].attribute).to eq(:foo_int)
 
-      mapping = ShaleMapperTesting::Child2.json_mapping.keys
+      mapping = FidoMapperTesting::Child2.json_mapping.keys
       expect(mapping.keys).to eq(%w[foo bar baz foo_int child2_foo])
       expect(mapping['foo'].attribute).to eq(:foo)
       expect(mapping['bar'].attribute).to eq(:bar)
@@ -322,7 +322,7 @@ RSpec.describe Shale::Mapper do
       expect(mapping['foo_int'].attribute).to eq(:foo_int)
       expect(mapping['child2_foo'].attribute).to eq(:child2_foo)
 
-      mapping = ShaleMapperTesting::Child3.json_mapping.keys
+      mapping = FidoMapperTesting::Child3.json_mapping.keys
       expect(mapping.keys).to eq(%w[foo bar baz foo_int child2_foo child3_bar])
       expect(mapping['foo'].attribute).to eq(:foo)
       expect(mapping['bar'].attribute).to eq(:bar)
@@ -333,21 +333,21 @@ RSpec.describe Shale::Mapper do
     end
 
     it 'copies yaml_mapping from parent' do
-      mapping = ShaleMapperTesting::Parent.yaml_mapping.keys
+      mapping = FidoMapperTesting::Parent.yaml_mapping.keys
       expect(mapping.keys).to eq(%w[foo bar baz foo_int])
       expect(mapping['foo'].attribute).to eq(:foo)
       expect(mapping['bar'].attribute).to eq(:bar)
       expect(mapping['baz'].attribute).to eq(:baz)
       expect(mapping['foo_int'].attribute).to eq(:foo_int)
 
-      mapping = ShaleMapperTesting::Child1.yaml_mapping.keys
+      mapping = FidoMapperTesting::Child1.yaml_mapping.keys
       expect(mapping.keys).to eq(%w[foo bar baz foo_int])
       expect(mapping['foo'].attribute).to eq(:foo)
       expect(mapping['bar'].attribute).to eq(:bar)
       expect(mapping['baz'].attribute).to eq(:baz)
       expect(mapping['foo_int'].attribute).to eq(:foo_int)
 
-      mapping = ShaleMapperTesting::Child2.yaml_mapping.keys
+      mapping = FidoMapperTesting::Child2.yaml_mapping.keys
       expect(mapping.keys).to eq(%w[foo bar baz foo_int child2_foo])
       expect(mapping['foo'].attribute).to eq(:foo)
       expect(mapping['bar'].attribute).to eq(:bar)
@@ -355,7 +355,7 @@ RSpec.describe Shale::Mapper do
       expect(mapping['foo_int'].attribute).to eq(:foo_int)
       expect(mapping['child2_foo'].attribute).to eq(:child2_foo)
 
-      mapping = ShaleMapperTesting::Child3.yaml_mapping.keys
+      mapping = FidoMapperTesting::Child3.yaml_mapping.keys
       expect(mapping.keys).to eq(%w[foo bar baz foo_int child2_foo child3_bar])
       expect(mapping['foo'].attribute).to eq(:foo)
       expect(mapping['bar'].attribute).to eq(:bar)
@@ -366,21 +366,21 @@ RSpec.describe Shale::Mapper do
     end
 
     it 'copies toml_mapping from parent' do
-      mapping = ShaleMapperTesting::Parent.toml_mapping.keys
+      mapping = FidoMapperTesting::Parent.toml_mapping.keys
       expect(mapping.keys).to eq(%w[foo bar baz foo_int])
       expect(mapping['foo'].attribute).to eq(:foo)
       expect(mapping['bar'].attribute).to eq(:bar)
       expect(mapping['baz'].attribute).to eq(:baz)
       expect(mapping['foo_int'].attribute).to eq(:foo_int)
 
-      mapping = ShaleMapperTesting::Child1.toml_mapping.keys
+      mapping = FidoMapperTesting::Child1.toml_mapping.keys
       expect(mapping.keys).to eq(%w[foo bar baz foo_int])
       expect(mapping['foo'].attribute).to eq(:foo)
       expect(mapping['bar'].attribute).to eq(:bar)
       expect(mapping['baz'].attribute).to eq(:baz)
       expect(mapping['foo_int'].attribute).to eq(:foo_int)
 
-      mapping = ShaleMapperTesting::Child2.toml_mapping.keys
+      mapping = FidoMapperTesting::Child2.toml_mapping.keys
       expect(mapping.keys).to eq(%w[foo bar baz foo_int child2_foo])
       expect(mapping['foo'].attribute).to eq(:foo)
       expect(mapping['bar'].attribute).to eq(:bar)
@@ -388,7 +388,7 @@ RSpec.describe Shale::Mapper do
       expect(mapping['foo_int'].attribute).to eq(:foo_int)
       expect(mapping['child2_foo'].attribute).to eq(:child2_foo)
 
-      mapping = ShaleMapperTesting::Child3.toml_mapping.keys
+      mapping = FidoMapperTesting::Child3.toml_mapping.keys
       expect(mapping.keys).to eq(%w[foo bar baz foo_int child2_foo child3_bar])
       expect(mapping['foo'].attribute).to eq(:foo)
       expect(mapping['bar'].attribute).to eq(:bar)
@@ -399,21 +399,21 @@ RSpec.describe Shale::Mapper do
     end
 
     it 'copies csv_mapping from parent' do
-      mapping = ShaleMapperTesting::Parent.csv_mapping.keys
+      mapping = FidoMapperTesting::Parent.csv_mapping.keys
       expect(mapping.keys).to eq(%w[foo bar baz foo_int])
       expect(mapping['foo'].attribute).to eq(:foo)
       expect(mapping['bar'].attribute).to eq(:bar)
       expect(mapping['baz'].attribute).to eq(:baz)
       expect(mapping['foo_int'].attribute).to eq(:foo_int)
 
-      mapping = ShaleMapperTesting::Child1.csv_mapping.keys
+      mapping = FidoMapperTesting::Child1.csv_mapping.keys
       expect(mapping.keys).to eq(%w[foo bar baz foo_int])
       expect(mapping['foo'].attribute).to eq(:foo)
       expect(mapping['bar'].attribute).to eq(:bar)
       expect(mapping['baz'].attribute).to eq(:baz)
       expect(mapping['foo_int'].attribute).to eq(:foo_int)
 
-      mapping = ShaleMapperTesting::Child2.csv_mapping.keys
+      mapping = FidoMapperTesting::Child2.csv_mapping.keys
       expect(mapping.keys).to eq(%w[foo bar baz foo_int child2_foo])
       expect(mapping['foo'].attribute).to eq(:foo)
       expect(mapping['bar'].attribute).to eq(:bar)
@@ -421,7 +421,7 @@ RSpec.describe Shale::Mapper do
       expect(mapping['foo_int'].attribute).to eq(:foo_int)
       expect(mapping['child2_foo'].attribute).to eq(:child2_foo)
 
-      mapping = ShaleMapperTesting::Child3.csv_mapping.keys
+      mapping = FidoMapperTesting::Child3.csv_mapping.keys
       expect(mapping.keys).to eq(%w[foo bar baz foo_int child2_foo child3_bar])
       expect(mapping['foo'].attribute).to eq(:foo)
       expect(mapping['bar'].attribute).to eq(:bar)
@@ -432,7 +432,7 @@ RSpec.describe Shale::Mapper do
     end
 
     it 'copies xml_mapping from parent' do
-      mapping = ShaleMapperTesting::Parent.xml_mapping
+      mapping = FidoMapperTesting::Parent.xml_mapping
       expect(mapping.elements.keys).to eq(%w[foo bar baz foo_int])
       expect(mapping.elements['foo'].attribute).to eq(:foo)
       expect(mapping.elements['bar'].attribute).to eq(:bar)
@@ -442,7 +442,7 @@ RSpec.describe Shale::Mapper do
       expect(mapping.content).to eq(nil)
       expect(mapping.prefixed_root).to eq('parent')
 
-      mapping = ShaleMapperTesting::Child1.xml_mapping
+      mapping = FidoMapperTesting::Child1.xml_mapping
       expect(mapping.elements.keys).to eq(%w[foo bar baz foo_int])
       expect(mapping.elements['foo'].attribute).to eq(:foo)
       expect(mapping.elements['bar'].attribute).to eq(:bar)
@@ -452,7 +452,7 @@ RSpec.describe Shale::Mapper do
       expect(mapping.content).to eq(nil)
       expect(mapping.prefixed_root).to eq('')
 
-      mapping = ShaleMapperTesting::Child2.xml_mapping
+      mapping = FidoMapperTesting::Child2.xml_mapping
       expect(mapping.elements.keys).to eq(%w[foo bar baz foo_int child2_foo])
       expect(mapping.elements['foo'].attribute).to eq(:foo)
       expect(mapping.elements['bar'].attribute).to eq(:bar)
@@ -463,7 +463,7 @@ RSpec.describe Shale::Mapper do
       expect(mapping.content).to eq(nil)
       expect(mapping.prefixed_root).to eq('child2')
 
-      mapping = ShaleMapperTesting::Child3.xml_mapping
+      mapping = FidoMapperTesting::Child3.xml_mapping
       expect(mapping.elements.keys).to eq(%w[foo bar baz foo_int child2_foo child3_bar])
       expect(mapping.elements['foo'].attribute).to eq(:foo)
       expect(mapping.elements['bar'].attribute).to eq(:bar)
@@ -479,19 +479,19 @@ RSpec.describe Shale::Mapper do
   describe '.model' do
     context 'when model is not set' do
       it 'returns Mapper class' do
-        klass = ShaleMapperTesting::MapperWithouModel
+        klass = FidoMapperTesting::MapperWithouModel
         expect(klass.model).to eq(klass)
       end
     end
 
     context 'when model is set' do
       it 'returns model class' do
-        klass = ShaleMapperTesting::MapperWithModel
-        expect(klass.model).to eq(ShaleMapperTesting::Model)
+        klass = FidoMapperTesting::MapperWithModel
+        expect(klass.model).to eq(FidoMapperTesting::Model)
       end
 
       it 'sets root on XML mapping' do
-        mapping = ShaleMapperTesting::MapperWithModel.xml_mapping
+        mapping = FidoMapperTesting::MapperWithModel.xml_mapping
         expect(mapping.unprefixed_root).to eq('model')
       end
     end
@@ -503,23 +503,23 @@ RSpec.describe Shale::Mapper do
         expect do
           # rubocop:disable Lint/ConstantDefinitionInBlock
           class FooBarBaz < described_class
-            attribute :foo, Shale::Type::String, default: ''
+            attribute :foo, Fido::Type::String, default: ''
           end
           # rubocop:enable Lint/ConstantDefinitionInBlock
-        end.to raise_error(Shale::DefaultNotCallableError)
+        end.to raise_error(Fido::DefaultNotCallableError)
       end
     end
 
     context 'with correct attribute definitions' do
       it 'sets reader and writter with type casting' do
-        subject = ShaleMapperTesting::Parent.new
+        subject = FidoMapperTesting::Parent.new
         subject.foo_int = '123'
         expect(subject.foo_int).to eq(123)
       end
 
       it 'sets accessor on anonymous module' do
-        parent = ShaleMapperTesting::AttributesModuleParent.new
-        child = ShaleMapperTesting::AttributesModuleChild.new
+        parent = FidoMapperTesting::AttributesModuleParent.new
+        child = FidoMapperTesting::AttributesModuleChild.new
 
         parent.parent = 'foo'
 
@@ -535,32 +535,32 @@ RSpec.describe Shale::Mapper do
       end
 
       it 'sets attributes' do
-        attributes = ShaleMapperTesting::Parent.attributes
+        attributes = FidoMapperTesting::Parent.attributes
         expect(attributes.keys).to eq(%i[foo bar baz foo_int])
 
         expect(attributes[:foo].name).to eq(:foo)
-        expect(attributes[:foo].type).to eq(Shale::Type::String)
+        expect(attributes[:foo].type).to eq(Fido::Type::String)
         expect(attributes[:foo].collection?).to eq(false)
         expect(attributes[:foo].default).to eq(nil)
 
         expect(attributes[:bar].name).to eq(:bar)
-        expect(attributes[:bar].type).to eq(Shale::Type::String)
+        expect(attributes[:bar].type).to eq(Fido::Type::String)
         expect(attributes[:bar].collection?).to eq(false)
-        expect(attributes[:bar].default).to eq(ShaleMapperTesting::BAR_DEFAULT_PROC)
+        expect(attributes[:bar].default).to eq(FidoMapperTesting::BAR_DEFAULT_PROC)
 
         expect(attributes[:baz].name).to eq(:baz)
-        expect(attributes[:baz].type).to eq(Shale::Type::String)
+        expect(attributes[:baz].type).to eq(Fido::Type::String)
         expect(attributes[:baz].collection?).to eq(true)
         expect(attributes[:baz].default.call).to eq([])
 
         expect(attributes[:foo_int].name).to eq(:foo_int)
-        expect(attributes[:foo_int].type).to eq(Shale::Type::Integer)
+        expect(attributes[:foo_int].type).to eq(Fido::Type::Integer)
         expect(attributes[:foo_int].collection?).to eq(false)
         expect(attributes[:foo_int].default).to eq(nil)
       end
 
       it 'default hash mapping' do
-        mapping = ShaleMapperTesting::Parent.hash_mapping.keys
+        mapping = FidoMapperTesting::Parent.hash_mapping.keys
         expect(mapping.keys).to eq(%w[foo bar baz foo_int])
         expect(mapping['foo'].attribute).to eq(:foo)
         expect(mapping['bar'].attribute).to eq(:bar)
@@ -569,7 +569,7 @@ RSpec.describe Shale::Mapper do
       end
 
       it 'default json mapping' do
-        mapping = ShaleMapperTesting::Parent.json_mapping.keys
+        mapping = FidoMapperTesting::Parent.json_mapping.keys
         expect(mapping.keys).to eq(%w[foo bar baz foo_int])
         expect(mapping['foo'].attribute).to eq(:foo)
         expect(mapping['bar'].attribute).to eq(:bar)
@@ -578,7 +578,7 @@ RSpec.describe Shale::Mapper do
       end
 
       it 'default yaml mapping' do
-        mapping = ShaleMapperTesting::Parent.yaml_mapping.keys
+        mapping = FidoMapperTesting::Parent.yaml_mapping.keys
         expect(mapping.keys).to eq(%w[foo bar baz foo_int])
         expect(mapping['foo'].attribute).to eq(:foo)
         expect(mapping['bar'].attribute).to eq(:bar)
@@ -587,7 +587,7 @@ RSpec.describe Shale::Mapper do
       end
 
       it 'default toml mapping' do
-        mapping = ShaleMapperTesting::Parent.toml_mapping.keys
+        mapping = FidoMapperTesting::Parent.toml_mapping.keys
         expect(mapping.keys).to eq(%w[foo bar baz foo_int])
         expect(mapping['foo'].attribute).to eq(:foo)
         expect(mapping['bar'].attribute).to eq(:bar)
@@ -596,7 +596,7 @@ RSpec.describe Shale::Mapper do
       end
 
       it 'default csv mapping' do
-        mapping = ShaleMapperTesting::Parent.csv_mapping.keys
+        mapping = FidoMapperTesting::Parent.csv_mapping.keys
         expect(mapping.keys).to eq(%w[foo bar baz foo_int])
         expect(mapping['foo'].attribute).to eq(:foo)
         expect(mapping['bar'].attribute).to eq(:bar)
@@ -605,7 +605,7 @@ RSpec.describe Shale::Mapper do
       end
 
       it 'default xml mapping' do
-        mapping = ShaleMapperTesting::Parent.xml_mapping
+        mapping = FidoMapperTesting::Parent.xml_mapping
 
         expect(mapping.elements.keys).to eq(%w[foo bar baz foo_int])
 
@@ -623,7 +623,7 @@ RSpec.describe Shale::Mapper do
 
   describe '.hsh' do
     it 'declares custom Hash mapping' do
-      mapping = ShaleMapperTesting::HashMapping.hash_mapping.keys
+      mapping = FidoMapperTesting::HashMapping.hash_mapping.keys
 
       expect(mapping.keys).to eq(%w[bar baz qux])
       expect(mapping['bar'].attribute).to eq(:foo)
@@ -645,7 +645,7 @@ RSpec.describe Shale::Mapper do
 
   describe '.json' do
     it 'declares custom JSON mapping' do
-      mapping = ShaleMapperTesting::JsonMapping.json_mapping.keys
+      mapping = FidoMapperTesting::JsonMapping.json_mapping.keys
 
       expect(mapping.keys).to eq(%w[bar baz qux])
       expect(mapping['bar'].attribute).to eq(:foo)
@@ -667,7 +667,7 @@ RSpec.describe Shale::Mapper do
 
   describe '.yaml' do
     it 'declares custom YAML mapping' do
-      mapping = ShaleMapperTesting::YamlMapping.yaml_mapping.keys
+      mapping = FidoMapperTesting::YamlMapping.yaml_mapping.keys
 
       expect(mapping.keys).to eq(%w[bar baz qux])
       expect(mapping['bar'].attribute).to eq(:foo)
@@ -689,7 +689,7 @@ RSpec.describe Shale::Mapper do
 
   describe '.toml' do
     it 'declares custom TOML mapping' do
-      mapping = ShaleMapperTesting::TomlMapping.toml_mapping.keys
+      mapping = FidoMapperTesting::TomlMapping.toml_mapping.keys
 
       expect(mapping.keys).to eq(%w[bar baz qux])
       expect(mapping['bar'].attribute).to eq(:foo)
@@ -711,7 +711,7 @@ RSpec.describe Shale::Mapper do
 
   describe '.csv' do
     it 'declares custom CSV mapping' do
-      mapping = ShaleMapperTesting::CsvMapping.csv_mapping.keys
+      mapping = FidoMapperTesting::CsvMapping.csv_mapping.keys
 
       expect(mapping.keys).to eq(%w[bar baz qux])
       expect(mapping['bar'].attribute).to eq(:foo)
@@ -733,9 +733,9 @@ RSpec.describe Shale::Mapper do
 
   describe '.xml' do
     it 'declares custom XML mapping' do
-      elements = ShaleMapperTesting::XmlMapping.xml_mapping.elements
-      attributes = ShaleMapperTesting::XmlMapping.xml_mapping.attributes
-      namespace = ShaleMapperTesting::XmlMapping.xml_mapping.default_namespace
+      elements = FidoMapperTesting::XmlMapping.xml_mapping.elements
+      attributes = FidoMapperTesting::XmlMapping.xml_mapping.attributes
+      namespace = FidoMapperTesting::XmlMapping.xml_mapping.default_namespace
 
       expect(elements.keys).to eq(%w[http://ns1.com:bar http://ns2.com:ns2_bar http://ns1.com:qux])
       expect(elements['http://ns1.com:bar'].attribute).to eq(:foo_element)
@@ -752,8 +752,8 @@ RSpec.describe Shale::Mapper do
       expect(attributes['baz'].attribute).to eq(nil)
       expect(attributes['baz'].group).to match('group_')
 
-      expect(ShaleMapperTesting::XmlMapping.xml_mapping.content.attribute).to eq(:foo_content)
-      expect(ShaleMapperTesting::XmlMapping.xml_mapping.prefixed_root).to eq('ns1:foobar')
+      expect(FidoMapperTesting::XmlMapping.xml_mapping.content.attribute).to eq(:foo_content)
+      expect(FidoMapperTesting::XmlMapping.xml_mapping.prefixed_root).to eq('ns1:foobar')
 
       expect(namespace.name).to eq('http://ns1.com')
       expect(namespace.prefix).to eq('ns1')
@@ -764,37 +764,37 @@ RSpec.describe Shale::Mapper do
     context 'when attribute does not exist' do
       it 'raises an error' do
         expect do
-          ShaleMapperTesting::Parent.new(not_existing: 'foo bar')
+          FidoMapperTesting::Parent.new(not_existing: 'foo bar')
         end.to(
-          raise_error(Shale::UnknownAttributeError)
+          raise_error(Fido::UnknownAttributeError)
         )
       end
     end
 
     context 'with attribute' do
       it 'sets the attribute to nil' do
-        subject = ShaleMapperTesting::Parent.new
+        subject = FidoMapperTesting::Parent.new
         expect(subject.foo).to eq(nil)
       end
     end
 
     context 'without attribute and with default value' do
       it 'sets the attribute to default value' do
-        subject = ShaleMapperTesting::Parent.new
+        subject = FidoMapperTesting::Parent.new
         expect(subject.bar).to eq('bar')
       end
     end
 
     context 'with attribute and with default value' do
       it 'sets the attribute' do
-        subject = ShaleMapperTesting::Parent.new(bar: 'baz')
+        subject = FidoMapperTesting::Parent.new(bar: 'baz')
         expect(subject.bar).to eq('baz')
       end
     end
 
     context 'when attribute exist' do
       it 'sets the attribute' do
-        subject = ShaleMapperTesting::Parent.new(foo: 'foo')
+        subject = FidoMapperTesting::Parent.new(foo: 'foo')
         expect(subject.foo).to eq('foo')
       end
     end
@@ -802,33 +802,33 @@ RSpec.describe Shale::Mapper do
 
   context 'finalized mapping' do
     it 'finalizes maping' do
-      expect(ShaleMapperTesting::FinalizedParent1.hash_mapping.keys.keys).to eq([])
-      expect(ShaleMapperTesting::FinalizedParent1.json_mapping.keys.keys).to eq([])
-      expect(ShaleMapperTesting::FinalizedParent1.yaml_mapping.keys.keys).to eq([])
-      expect(ShaleMapperTesting::FinalizedParent1.toml_mapping.keys.keys).to eq([])
-      expect(ShaleMapperTesting::FinalizedParent1.csv_mapping.keys.keys).to eq([])
-      expect(ShaleMapperTesting::FinalizedParent1.xml_mapping.elements.keys).to eq([])
+      expect(FidoMapperTesting::FinalizedParent1.hash_mapping.keys.keys).to eq([])
+      expect(FidoMapperTesting::FinalizedParent1.json_mapping.keys.keys).to eq([])
+      expect(FidoMapperTesting::FinalizedParent1.yaml_mapping.keys.keys).to eq([])
+      expect(FidoMapperTesting::FinalizedParent1.toml_mapping.keys.keys).to eq([])
+      expect(FidoMapperTesting::FinalizedParent1.csv_mapping.keys.keys).to eq([])
+      expect(FidoMapperTesting::FinalizedParent1.xml_mapping.elements.keys).to eq([])
 
-      expect(ShaleMapperTesting::FinalizedParent2.hash_mapping.keys.keys).to eq([])
-      expect(ShaleMapperTesting::FinalizedParent2.json_mapping.keys.keys).to eq([])
-      expect(ShaleMapperTesting::FinalizedParent2.yaml_mapping.keys.keys).to eq([])
-      expect(ShaleMapperTesting::FinalizedParent2.toml_mapping.keys.keys).to eq([])
-      expect(ShaleMapperTesting::FinalizedParent2.csv_mapping.keys.keys).to eq([])
-      expect(ShaleMapperTesting::FinalizedParent2.xml_mapping.elements.keys).to eq([])
+      expect(FidoMapperTesting::FinalizedParent2.hash_mapping.keys.keys).to eq([])
+      expect(FidoMapperTesting::FinalizedParent2.json_mapping.keys.keys).to eq([])
+      expect(FidoMapperTesting::FinalizedParent2.yaml_mapping.keys.keys).to eq([])
+      expect(FidoMapperTesting::FinalizedParent2.toml_mapping.keys.keys).to eq([])
+      expect(FidoMapperTesting::FinalizedParent2.csv_mapping.keys.keys).to eq([])
+      expect(FidoMapperTesting::FinalizedParent2.xml_mapping.elements.keys).to eq([])
 
-      expect(ShaleMapperTesting::FinalizedChild1.hash_mapping.keys.keys).to eq(['two'])
-      expect(ShaleMapperTesting::FinalizedChild1.json_mapping.keys.keys).to eq(['two'])
-      expect(ShaleMapperTesting::FinalizedChild1.yaml_mapping.keys.keys).to eq(['two'])
-      expect(ShaleMapperTesting::FinalizedChild1.toml_mapping.keys.keys).to eq(['two'])
-      expect(ShaleMapperTesting::FinalizedChild1.csv_mapping.keys.keys).to eq(['two'])
-      expect(ShaleMapperTesting::FinalizedChild1.xml_mapping.elements.keys).to eq(['two'])
+      expect(FidoMapperTesting::FinalizedChild1.hash_mapping.keys.keys).to eq(['two'])
+      expect(FidoMapperTesting::FinalizedChild1.json_mapping.keys.keys).to eq(['two'])
+      expect(FidoMapperTesting::FinalizedChild1.yaml_mapping.keys.keys).to eq(['two'])
+      expect(FidoMapperTesting::FinalizedChild1.toml_mapping.keys.keys).to eq(['two'])
+      expect(FidoMapperTesting::FinalizedChild1.csv_mapping.keys.keys).to eq(['two'])
+      expect(FidoMapperTesting::FinalizedChild1.xml_mapping.elements.keys).to eq(['two'])
 
-      expect(ShaleMapperTesting::FinalizedChild2.hash_mapping.keys.keys).to eq(['two'])
-      expect(ShaleMapperTesting::FinalizedChild2.json_mapping.keys.keys).to eq(['two'])
-      expect(ShaleMapperTesting::FinalizedChild2.yaml_mapping.keys.keys).to eq(['two'])
-      expect(ShaleMapperTesting::FinalizedChild2.toml_mapping.keys.keys).to eq(['two'])
-      expect(ShaleMapperTesting::FinalizedChild2.csv_mapping.keys.keys).to eq(['two'])
-      expect(ShaleMapperTesting::FinalizedChild2.xml_mapping.elements.keys).to eq(['two'])
+      expect(FidoMapperTesting::FinalizedChild2.hash_mapping.keys.keys).to eq(['two'])
+      expect(FidoMapperTesting::FinalizedChild2.json_mapping.keys.keys).to eq(['two'])
+      expect(FidoMapperTesting::FinalizedChild2.yaml_mapping.keys.keys).to eq(['two'])
+      expect(FidoMapperTesting::FinalizedChild2.toml_mapping.keys.keys).to eq(['two'])
+      expect(FidoMapperTesting::FinalizedChild2.csv_mapping.keys.keys).to eq(['two'])
+      expect(FidoMapperTesting::FinalizedChild2.xml_mapping.elements.keys).to eq(['two'])
     end
   end
 end

@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-require 'shale/schema/json_generator/boolean'
-require 'shale/schema/json_generator/object'
+require 'fido/schema/json_generator/boolean'
+require 'fido/schema/json_generator/object'
 
-RSpec.describe Shale::Schema::JSONGenerator::Object do
+RSpec.describe Fido::Schema::JSONGenerator::Object do
   let(:types) do
-    [Shale::Schema::JSONGenerator::Boolean.new('bar')]
+    [Fido::Schema::JSONGenerator::Boolean.new('bar')]
   end
 
   describe '#as_type' do

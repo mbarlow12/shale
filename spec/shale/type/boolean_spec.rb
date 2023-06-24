@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'shale/type/boolean'
+require 'fido/type/boolean'
 
-RSpec.describe Shale::Type::Boolean do
+RSpec.describe Fido::Type::Boolean do
   describe '.cast' do
     let(:false_values) do
       [

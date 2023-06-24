@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'shale/schema/compiler/xml_complex'
+require 'fido/schema/compiler/xml_complex'
 
-RSpec.describe Shale::Schema::Compiler::XMLComplex do
+RSpec.describe Fido::Schema::Compiler::XMLComplex do
   describe '#root=' do
     it 'sets the value' do
       complex = described_class.new('foobar-id', 'foobar', nil, nil, nil)

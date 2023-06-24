@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'shale/type/float'
+require 'fido/type/float'
 
-RSpec.describe Shale::Type::Float do
+RSpec.describe Fido::Type::Float do
   describe '.cast' do
     context 'when value is nil' do
       it 'returns nil' do

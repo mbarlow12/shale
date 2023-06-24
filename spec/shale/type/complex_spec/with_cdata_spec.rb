@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-require 'shale'
-require 'shale/adapter/rexml'
+require 'fido'
+require 'fido/adapter/rexml'
 require 'tomlib'
 
 module ComplexSpec__CDATA # rubocop:disable Naming/ClassAndModuleCamelCase
-  class Child < Shale::Mapper
-    attribute :element1, Shale::Type::String
+  class Child < Fido::Mapper
+    attribute :element1, Fido::Type::String
 
     xml do
       root 'child'
@@ -14,9 +14,9 @@ module ComplexSpec__CDATA # rubocop:disable Naming/ClassAndModuleCamelCase
     end
   end
 
-  class Parent < Shale::Mapper
-    attribute :element1, Shale::Type::String
-    attribute :element2, Shale::Type::String, collection: true
+  class Parent < Fido::Mapper
+    attribute :element1, Fido::Type::String
+    attribute :element2, Fido::Type::String, collection: true
     attribute :child, Child
 
     xml do
@@ -29,13 +29,13 @@ module ComplexSpec__CDATA # rubocop:disable Naming/ClassAndModuleCamelCase
   end
 end
 
-RSpec.describe Shale::Type::Complex do
+RSpec.describe Fido::Type::Complex do
   before(:each) do
-    Shale.json_adapter = Shale::Adapter::JSON
-    Shale.yaml_adapter = YAML
-    Shale.toml_adapter = Tomlib
-    Shale.csv_adapter = Shale::Adapter::CSV
-    Shale.xml_adapter = Shale::Adapter::REXML
+    Fido.json_adapter = Fido::Adapter::JSON
+    Fido.yaml_adapter = YAML
+    Fido.toml_adapter = Tomlib
+    Fido.csv_adapter = Fido::Adapter::CSV
+    Fido.xml_adapter = Fido::Adapter::REXML
   end
 
   context 'with CDATA option' do

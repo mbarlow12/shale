@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'shale/schema/json_generator/time'
+require 'fido/schema/json_generator/time'
 
-RSpec.describe Shale::Schema::JSONGenerator::Time do
+RSpec.describe Fido::Schema::JSONGenerator::Time do
   describe '#as_type' do
     it 'returns JSON Schema fragment as Hash' do
       expected = { 'type' => 'string', 'format' => 'date-time' }

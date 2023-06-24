@@ -1,86 +1,86 @@
 # frozen_string_literal: true
 
-require 'shale/mapping/group/xml_grouping'
-require 'shale/mapping/descriptor/xml'
-require 'shale/mapping/descriptor/xml_namespace'
+require 'fido/mapping/group/xml_grouping'
+require 'fido/mapping/descriptor/xml'
+require 'fido/mapping/descriptor/xml_namespace'
 
-RSpec.describe Shale::Mapping::Group::XmlGrouping do
+RSpec.describe Fido::Mapping::Group::XmlGrouping do
   describe '#add' do
     it 'adds a group for a mapping' do
       instance = described_class.new
 
-      mapping = Shale::Mapping::Descriptor::Xml.new(
+      mapping = Fido::Mapping::Descriptor::Xml.new(
         name: nil,
         attribute: nil,
         receiver: nil,
         methods: { from: :met_from, to: :met_to },
         group: 'group1',
-        namespace: Shale::Mapping::Descriptor::XmlNamespace.new,
+        namespace: Fido::Mapping::Descriptor::XmlNamespace.new,
         cdata: false,
         render_nil: false
       )
 
       instance.add(mapping, :content, 'val1')
 
-      mapping = Shale::Mapping::Descriptor::Xml.new(
+      mapping = Fido::Mapping::Descriptor::Xml.new(
         name: 'foo',
         attribute: nil,
         receiver: nil,
         methods: { from: :met_from, to: :met_to },
         group: 'group1',
-        namespace: Shale::Mapping::Descriptor::XmlNamespace.new,
+        namespace: Fido::Mapping::Descriptor::XmlNamespace.new,
         cdata: false,
         render_nil: false
       )
 
       instance.add(mapping, :element, 'val2')
 
-      mapping = Shale::Mapping::Descriptor::Xml.new(
+      mapping = Fido::Mapping::Descriptor::Xml.new(
         name: 'bar',
         attribute: nil,
         receiver: nil,
         methods: { from: :met_from, to: :met_to },
         group: 'group1',
-        namespace: Shale::Mapping::Descriptor::XmlNamespace.new,
+        namespace: Fido::Mapping::Descriptor::XmlNamespace.new,
         cdata: false,
         render_nil: false
       )
 
       instance.add(mapping, :attribute, 'val3')
 
-      mapping = Shale::Mapping::Descriptor::Xml.new(
+      mapping = Fido::Mapping::Descriptor::Xml.new(
         name: nil,
         attribute: nil,
         receiver: nil,
         methods: { from: :met_from_alt, to: :met_to_alt },
         group: 'group2',
-        namespace: Shale::Mapping::Descriptor::XmlNamespace.new('http://foo.com', 'foo'),
+        namespace: Fido::Mapping::Descriptor::XmlNamespace.new('http://foo.com', 'foo'),
         cdata: false,
         render_nil: false
       )
 
       instance.add(mapping, :content, 'val1')
 
-      mapping = Shale::Mapping::Descriptor::Xml.new(
+      mapping = Fido::Mapping::Descriptor::Xml.new(
         name: 'foo',
         attribute: nil,
         receiver: nil,
         methods: { from: :met_from_alt, to: :met_to_alt },
         group: 'group2',
-        namespace: Shale::Mapping::Descriptor::XmlNamespace.new('http://foo.com', 'foo'),
+        namespace: Fido::Mapping::Descriptor::XmlNamespace.new('http://foo.com', 'foo'),
         cdata: false,
         render_nil: false
       )
 
       instance.add(mapping, :element, 'val2')
 
-      mapping = Shale::Mapping::Descriptor::Xml.new(
+      mapping = Fido::Mapping::Descriptor::Xml.new(
         name: 'bar',
         attribute: nil,
         receiver: nil,
         methods: { from: :met_from_alt, to: :met_to_alt },
         group: 'group2',
-        namespace: Shale::Mapping::Descriptor::XmlNamespace.new('http://foo.com', 'foo'),
+        namespace: Fido::Mapping::Descriptor::XmlNamespace.new('http://foo.com', 'foo'),
         cdata: false,
         render_nil: false
       )

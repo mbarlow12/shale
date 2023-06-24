@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'shale/mapping/xml_base'
+require 'fido/mapping/xml_base'
 
-RSpec.describe Shale::Mapping::XmlBase do
+RSpec.describe Fido::Mapping::XmlBase do
   describe '#elements' do
     it 'returns elements hash' do
       obj = described_class.new
@@ -72,7 +72,7 @@ RSpec.describe Shale::Mapping::XmlBase do
 
         expect do
           obj.map_element('foo')
-        end.to raise_error(Shale::IncorrectMappingArgumentsError)
+        end.to raise_error(Fido::IncorrectMappingArgumentsError)
       end
     end
 
@@ -91,7 +91,7 @@ RSpec.describe Shale::Mapping::XmlBase do
 
         expect do
           obj.map_element('key', to: nil, receiver: :foo, using: {})
-        end.to raise_error(Shale::IncorrectMappingArgumentsError)
+        end.to raise_error(Fido::IncorrectMappingArgumentsError)
       end
     end
 
@@ -112,7 +112,7 @@ RSpec.describe Shale::Mapping::XmlBase do
 
           expect do
             obj.map_element('foo', using: { to: :foo })
-          end.to raise_error(Shale::IncorrectMappingArgumentsError)
+          end.to raise_error(Fido::IncorrectMappingArgumentsError)
         end
       end
 
@@ -122,7 +122,7 @@ RSpec.describe Shale::Mapping::XmlBase do
 
           expect do
             obj.map_element('foo', using: { from: :foo })
-          end.to raise_error(Shale::IncorrectMappingArgumentsError)
+          end.to raise_error(Fido::IncorrectMappingArgumentsError)
         end
       end
 
@@ -152,7 +152,7 @@ RSpec.describe Shale::Mapping::XmlBase do
 
         expect do
           obj.map_element('foo', to: :foo, namespace: nil, prefix: 'bar')
-        end.to raise_error(Shale::IncorrectMappingArgumentsError)
+        end.to raise_error(Fido::IncorrectMappingArgumentsError)
       end
     end
 
@@ -162,7 +162,7 @@ RSpec.describe Shale::Mapping::XmlBase do
 
         expect do
           obj.map_element('foo', to: :foo, namespace: 'bar', prefix: nil)
-        end.to raise_error(Shale::IncorrectMappingArgumentsError)
+        end.to raise_error(Fido::IncorrectMappingArgumentsError)
       end
     end
 
@@ -270,7 +270,7 @@ RSpec.describe Shale::Mapping::XmlBase do
 
         expect do
           obj.map_attribute('foo')
-        end.to raise_error(Shale::IncorrectMappingArgumentsError)
+        end.to raise_error(Fido::IncorrectMappingArgumentsError)
       end
     end
 
@@ -289,7 +289,7 @@ RSpec.describe Shale::Mapping::XmlBase do
 
         expect do
           obj.map_attribute('key', to: nil, receiver: :foo, using: {})
-        end.to raise_error(Shale::IncorrectMappingArgumentsError)
+        end.to raise_error(Fido::IncorrectMappingArgumentsError)
       end
     end
 
@@ -310,7 +310,7 @@ RSpec.describe Shale::Mapping::XmlBase do
 
           expect do
             obj.map_attribute('foo', using: { to: :foo })
-          end.to raise_error(Shale::IncorrectMappingArgumentsError)
+          end.to raise_error(Fido::IncorrectMappingArgumentsError)
         end
       end
 
@@ -320,7 +320,7 @@ RSpec.describe Shale::Mapping::XmlBase do
 
           expect do
             obj.map_attribute('foo', using: { from: :foo })
-          end.to raise_error(Shale::IncorrectMappingArgumentsError)
+          end.to raise_error(Fido::IncorrectMappingArgumentsError)
         end
       end
 
@@ -350,7 +350,7 @@ RSpec.describe Shale::Mapping::XmlBase do
 
         expect do
           obj.map_attribute('foo', to: :foo, namespace: nil, prefix: 'bar')
-        end.to raise_error(Shale::IncorrectMappingArgumentsError)
+        end.to raise_error(Fido::IncorrectMappingArgumentsError)
       end
     end
 
@@ -360,7 +360,7 @@ RSpec.describe Shale::Mapping::XmlBase do
 
         expect do
           obj.map_attribute('foo', to: :foo, namespace: 'bar', prefix: nil)
-        end.to raise_error(Shale::IncorrectMappingArgumentsError)
+        end.to raise_error(Fido::IncorrectMappingArgumentsError)
       end
     end
 
@@ -454,7 +454,7 @@ RSpec.describe Shale::Mapping::XmlBase do
 
         expect do
           obj.map_content
-        end.to raise_error(Shale::IncorrectMappingArgumentsError)
+        end.to raise_error(Fido::IncorrectMappingArgumentsError)
       end
     end
 
@@ -472,7 +472,7 @@ RSpec.describe Shale::Mapping::XmlBase do
 
         expect do
           obj.map_content(to: nil, receiver: :foo, using: {})
-        end.to raise_error(Shale::IncorrectMappingArgumentsError)
+        end.to raise_error(Fido::IncorrectMappingArgumentsError)
       end
     end
 
@@ -492,7 +492,7 @@ RSpec.describe Shale::Mapping::XmlBase do
 
           expect do
             obj.map_content(using: { to: :foo })
-          end.to raise_error(Shale::IncorrectMappingArgumentsError)
+          end.to raise_error(Fido::IncorrectMappingArgumentsError)
         end
       end
 
@@ -502,7 +502,7 @@ RSpec.describe Shale::Mapping::XmlBase do
 
           expect do
             obj.map_content(using: { from: :foo })
-          end.to raise_error(Shale::IncorrectMappingArgumentsError)
+          end.to raise_error(Fido::IncorrectMappingArgumentsError)
         end
       end
 

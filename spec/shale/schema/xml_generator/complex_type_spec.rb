@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
-require 'shale'
-require 'shale/adapter/rexml'
-require 'shale/schema/xml_generator/complex_type'
-require 'shale/schema/xml_generator/typed_attribute'
-require 'shale/schema/xml_generator/typed_element'
+require 'fido'
+require 'fido/adapter/rexml'
+require 'fido/schema/xml_generator/complex_type'
+require 'fido/schema/xml_generator/typed_attribute'
+require 'fido/schema/xml_generator/typed_element'
 
-RSpec.describe Shale::Schema::XMLGenerator::ComplexType do
+RSpec.describe Fido::Schema::XMLGenerator::ComplexType do
   before(:each) do
-    Shale.xml_adapter = Shale::Adapter::REXML
+    Fido.xml_adapter = Fido::Adapter::REXML
   end
 
   describe '#name' do
@@ -20,9 +20,9 @@ RSpec.describe Shale::Schema::XMLGenerator::ComplexType do
   describe '#as_xml' do
     context 'when children is empty' do
       it 'returns XML node' do
-        doc = Shale.xml_adapter.create_document
+        doc = Fido.xml_adapter.create_document
         el = described_class.new('foo').as_xml(doc)
-        result = Shale.xml_adapter.dump(el)
+        result = Fido.xml_adapter.dump(el)
 
         expect(result).to eq('<xs:complexType name="foo"/>')
       end
@@ -30,9 +30,9 @@ RSpec.describe Shale::Schema::XMLGenerator::ComplexType do
 
     context 'with mixed set to true' do
       it 'returns XML node' do
-        doc = Shale.xml_adapter.create_document
+        doc = Fido.xml_adapter.create_document
         el = described_class.new('foo', [], mixed: true).as_xml(doc)
-        result = Shale.xml_adapter.dump(el)
+        result = Fido.xml_adapter.dump(el)
 
         expect(result).to eq('<xs:complexType mixed="true" name="foo"/>')
       end
@@ -40,15 +40,15 @@ RSpec.describe Shale::Schema::XMLGenerator::ComplexType do
 
     context 'with schildren present' do
       it 'returns XML node' do
-        doc = Shale.xml_adapter.create_document
+        doc = Fido.xml_adapter.create_document
 
         children = [
-          Shale::Schema::XMLGenerator::TypedElement.new(name: 'foo', type: 'string'),
-          Shale::Schema::XMLGenerator::TypedAttribute.new(name: 'bar', type: 'string'),
+          Fido::Schema::XMLGenerator::TypedElement.new(name: 'foo', type: 'string'),
+          Fido::Schema::XMLGenerator::TypedAttribute.new(name: 'bar', type: 'string'),
         ]
         el = described_class.new('foo', children).as_xml(doc)
 
-        result = Shale.xml_adapter.dump(el)
+        result = Fido.xml_adapter.dump(el)
 
         expected = <<~XML.gsub(/\n/, '').gsub(/\s{2,}/, '')
           <xs:complexType name="foo">

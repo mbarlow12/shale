@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-require 'shale'
-require 'shale/adapter/rexml'
+require 'fido'
+require 'fido/adapter/rexml'
 require 'tomlib'
 
 module ComplexSpec__CustomMapping # rubocop:disable Naming/ClassAndModuleCamelCase
-  class Child < Shale::Mapper
-    attribute :one, Shale::Type::String
-    attribute :two, Shale::Type::String, collection: true
+  class Child < Fido::Mapper
+    attribute :one, Fido::Type::String
+    attribute :two, Fido::Type::String, collection: true
 
     hsh do
       map 'One', to: :one
@@ -30,9 +30,9 @@ module ComplexSpec__CustomMapping # rubocop:disable Naming/ClassAndModuleCamelCa
     end
   end
 
-  class Parent < Shale::Mapper
-    attribute :one, Shale::Type::String
-    attribute :two, Shale::Type::String, collection: true
+  class Parent < Fido::Mapper
+    attribute :one, Fido::Type::String
+    attribute :two, Fido::Type::String, collection: true
     attribute :child, Child
 
     hsh do
@@ -60,9 +60,9 @@ module ComplexSpec__CustomMapping # rubocop:disable Naming/ClassAndModuleCamelCa
     end
   end
 
-  class ParentCsv < Shale::Mapper
-    attribute :one, Shale::Type::String
-    attribute :two, Shale::Type::String
+  class ParentCsv < Fido::Mapper
+    attribute :one, Fido::Type::String
+    attribute :two, Fido::Type::String
 
     csv do
       map 'One', to: :one
@@ -70,10 +70,10 @@ module ComplexSpec__CustomMapping # rubocop:disable Naming/ClassAndModuleCamelCa
     end
   end
 
-  class ChildXml < Shale::Mapper
-    attribute :content, Shale::Type::String
-    attribute :one, Shale::Type::String
-    attribute :two, Shale::Type::String
+  class ChildXml < Fido::Mapper
+    attribute :content, Fido::Type::String
+    attribute :one, Fido::Type::String
+    attribute :two, Fido::Type::String
 
     xml do
       map_content to: :content
@@ -82,12 +82,12 @@ module ComplexSpec__CustomMapping # rubocop:disable Naming/ClassAndModuleCamelCa
     end
   end
 
-  class ParentXml < Shale::Mapper
-    attribute :content, Shale::Type::String
-    attribute :one, Shale::Type::String
-    attribute :one_collection, Shale::Type::String, collection: true
-    attribute :two, Shale::Type::String
-    attribute :two_collection, Shale::Type::String, collection: true
+  class ParentXml < Fido::Mapper
+    attribute :content, Fido::Type::String
+    attribute :one, Fido::Type::String
+    attribute :one_collection, Fido::Type::String, collection: true
+    attribute :two, Fido::Type::String
+    attribute :two_collection, Fido::Type::String, collection: true
     attribute :child, ChildXml
 
     xml do
@@ -102,13 +102,13 @@ module ComplexSpec__CustomMapping # rubocop:disable Naming/ClassAndModuleCamelCa
   end
 end
 
-RSpec.describe Shale::Type::Complex do
+RSpec.describe Fido::Type::Complex do
   before(:each) do
-    Shale.json_adapter = Shale::Adapter::JSON
-    Shale.yaml_adapter = YAML
-    Shale.toml_adapter = Tomlib
-    Shale.csv_adapter = Shale::Adapter::CSV
-    Shale.xml_adapter = Shale::Adapter::REXML
+    Fido.json_adapter = Fido::Adapter::JSON
+    Fido.yaml_adapter = YAML
+    Fido.toml_adapter = Tomlib
+    Fido.csv_adapter = Fido::Adapter::CSV
+    Fido.xml_adapter = Fido::Adapter::REXML
   end
 
   let(:mapper) { ComplexSpec__CustomMapping::Parent }

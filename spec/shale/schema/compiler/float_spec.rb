@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-require 'shale/schema/compiler/float'
+require 'fido/schema/compiler/float'
 
-RSpec.describe Shale::Schema::Compiler::Float do
+RSpec.describe Fido::Schema::Compiler::Float do
   describe '#name' do
-    it 'returns Shale type name' do
-      expect(described_class.new.name).to eq('Shale::Type::Float')
+    it 'returns Fido type name' do
+      expect(described_class.new.name).to eq('Fido::Type::Float')
     end
   end
 end

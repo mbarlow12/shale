@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 require 'nokogiri'
-require 'shale/adapter/nokogiri'
+require 'fido/adapter/nokogiri'
 
-RSpec.describe Shale::Adapter::Nokogiri do
+RSpec.describe Fido::Adapter::Nokogiri do
   describe '.load' do
     context 'with valid XML document' do
       it 'parses XML document' do
@@ -16,7 +16,7 @@ RSpec.describe Shale::Adapter::Nokogiri do
       it 'raises an error' do
         expect do
           described_class.load('<foo')
-        end.to raise_error(Shale::ParseError)
+        end.to raise_error(Fido::ParseError)
       end
     end
   end
@@ -121,14 +121,14 @@ RSpec.describe Shale::Adapter::Nokogiri do
   end
 
   describe '.create_document' do
-    it 'returns instance of Shale::Adapter::Nokogiri::Document' do
+    it 'returns instance of Fido::Adapter::Nokogiri::Document' do
       doc = described_class.create_document
-      expect(doc.class).to eq(Shale::Adapter::Nokogiri::Document)
+      expect(doc.class).to eq(Fido::Adapter::Nokogiri::Document)
     end
 
     it 'accepts one parameter and returns instance' do
       doc = described_class.create_document('foobar')
-      expect(doc.class).to eq(Shale::Adapter::Nokogiri::Document)
+      expect(doc.class).to eq(Fido::Adapter::Nokogiri::Document)
       expect(doc.doc.version).to eq('foobar')
     end
   end

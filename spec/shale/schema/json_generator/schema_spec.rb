@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require 'shale/schema/json_generator/object'
-require 'shale/schema/json_generator/schema'
+require 'fido/schema/json_generator/object'
+require 'fido/schema/json_generator/schema'
 
-RSpec.describe Shale::Schema::JSONGenerator::Schema do
+RSpec.describe Fido::Schema::JSONGenerator::Schema do
   describe '#as_json' do
     context 'when id, title and description are not empty' do
       it 'returns JSON Schema fragment as Hash' do
@@ -22,8 +22,8 @@ RSpec.describe Shale::Schema::JSONGenerator::Schema do
     context 'when types are not empty' do
       it 'returns JSON Schema fragment as Hash' do
         types = [
-          Shale::Schema::JSONGenerator::Object.new('Foo', []),
-          Shale::Schema::JSONGenerator::Object.new('Bar', []),
+          Fido::Schema::JSONGenerator::Object.new('Foo', []),
+          Fido::Schema::JSONGenerator::Object.new('Bar', []),
         ]
 
         schema = described_class.new(types)

@@ -1,35 +1,35 @@
-require 'shale'
+require 'fido'
 require_relative 'models'
 
-class AddressMapper < Shale::Mapper
+class AddressMapper < Fido::Mapper
   model Address
 
-  attribute :city, Shale::Type::Value
-  attribute :street, Shale::Type::Value
-  attribute :zip, Shale::Type::Value
-  attribute :state, Shale::Type::Value
-  attribute :state_abbr, Shale::Type::Value
-  attribute :country, Shale::Type::Value
-  attribute :country_code, Shale::Type::Value
-  attribute :time_zone, Shale::Type::Value
-  attribute :latitude, Shale::Type::Value
-  attribute :longitude, Shale::Type::Value
+  attribute :city, Fido::Type::Value
+  attribute :street, Fido::Type::Value
+  attribute :zip, Fido::Type::Value
+  attribute :state, Fido::Type::Value
+  attribute :state_abbr, Fido::Type::Value
+  attribute :country, Fido::Type::Value
+  attribute :country_code, Fido::Type::Value
+  attribute :time_zone, Fido::Type::Value
+  attribute :latitude, Fido::Type::Value
+  attribute :longitude, Fido::Type::Value
 end
 
-class ContactMapper < Shale::Mapper
+class ContactMapper < Fido::Mapper
   model Contact
 
-  attribute :type, Shale::Type::Value
-  attribute :contact, Shale::Type::Value
+  attribute :type, Fido::Type::Value
+  attribute :contact, Fido::Type::Value
 end
 
-class CompanyMapper < Shale::Mapper
+class CompanyMapper < Fido::Mapper
   model Company
 
-  attribute :name, Shale::Type::Value
-  attribute :industry, Shale::Type::Value
-  attribute :ein, Shale::Type::Value
-  attribute :type, Shale::Type::Value
+  attribute :name, Fido::Type::Value
+  attribute :industry, Fido::Type::Value
+  attribute :ein, Fido::Type::Value
+  attribute :type, Fido::Type::Value
   attribute :address, AddressMapper
   attribute :contacts, ContactMapper, collection: true
 
@@ -44,26 +44,26 @@ class CompanyMapper < Shale::Mapper
   end
 end
 
-class CarMapper < Shale::Mapper
+class CarMapper < Fido::Mapper
   model Car
 
-  attribute :model, Shale::Type::Value
-  attribute :brand, Shale::Type::Value
+  attribute :model, Fido::Type::Value
+  attribute :brand, Fido::Type::Value
   attribute :manufacturer, CompanyMapper
 end
 
-class BankAccountMapper < Shale::Mapper
+class BankAccountMapper < Fido::Mapper
   model BankAccount
 
-  attribute :number, Shale::Type::Value
-  attribute :balance, Shale::Type::Value
+  attribute :number, Fido::Type::Value
+  attribute :balance, Fido::Type::Value
   attribute :bank, CompanyMapper
 end
 
-class SchoolMapper < Shale::Mapper
+class SchoolMapper < Fido::Mapper
   model School
 
-  attribute :name, Shale::Type::Value
+  attribute :name, Fido::Type::Value
   attribute :address, AddressMapper
   attribute :contacts, ContactMapper, collection: true
 
@@ -75,36 +75,36 @@ class SchoolMapper < Shale::Mapper
   end
 end
 
-class JobMapper < Shale::Mapper
+class JobMapper < Fido::Mapper
   model Job
 
-  attribute :title, Shale::Type::Value
-  attribute :field, Shale::Type::Value
-  attribute :seniority, Shale::Type::Value
-  attribute :position, Shale::Type::Value
-  attribute :employment_type, Shale::Type::Value
+  attribute :title, Fido::Type::Value
+  attribute :field, Fido::Type::Value
+  attribute :seniority, Fido::Type::Value
+  attribute :position, Fido::Type::Value
+  attribute :employment_type, Fido::Type::Value
   attribute :company, CompanyMapper
 end
 
-class AnimalMapper < Shale::Mapper
+class AnimalMapper < Fido::Mapper
   model Animal
 
-  attribute :kind, Shale::Type::Value
-  attribute :breed, Shale::Type::Value
-  attribute :name, Shale::Type::Value
+  attribute :kind, Fido::Type::Value
+  attribute :breed, Fido::Type::Value
+  attribute :name, Fido::Type::Value
 end
 
-class PersonMapper < Shale::Mapper
+class PersonMapper < Fido::Mapper
   model Person
 
-  attribute :first_name, Shale::Type::Value
-  attribute :last_name, Shale::Type::Value
-  attribute :middle_name, Shale::Type::Value
-  attribute :prefix, Shale::Type::Value
-  attribute :date_of_birth, Shale::Type::Value
+  attribute :first_name, Fido::Type::Value
+  attribute :last_name, Fido::Type::Value
+  attribute :middle_name, Fido::Type::Value
+  attribute :prefix, Fido::Type::Value
+  attribute :date_of_birth, Fido::Type::Value
   attribute :place_of_birth, AddressMapper
-  attribute :driving_license, Shale::Type::Value
-  attribute :hobbies, Shale::Type::Value, collection: true
+  attribute :driving_license, Fido::Type::Value
+  attribute :hobbies, Fido::Type::Value, collection: true
   attribute :education, SchoolMapper, collection: true
   attribute :current_address, AddressMapper
   attribute :past_addresses, AddressMapper, collection: true
@@ -141,7 +141,7 @@ class PersonMapper < Shale::Mapper
   end
 end
 
-class ReportMapper < Shale::Mapper
+class ReportMapper < Fido::Mapper
   model Report
 
   attribute :people, PersonMapper, collection: true

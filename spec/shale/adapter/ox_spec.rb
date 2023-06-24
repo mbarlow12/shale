@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 require 'ox'
-require 'shale/adapter/ox'
+require 'fido/adapter/ox'
 
-RSpec.describe Shale::Adapter::Ox do
+RSpec.describe Fido::Adapter::Ox do
   describe '.load' do
     context 'with valid XML document' do
       it 'parses XML document' do
@@ -16,7 +16,7 @@ RSpec.describe Shale::Adapter::Ox do
       it 'raises an error' do
         expect do
           described_class.load('<foo')
-        end.to raise_error(Shale::ParseError)
+        end.to raise_error(Fido::ParseError)
       end
     end
   end
@@ -117,14 +117,14 @@ RSpec.describe Shale::Adapter::Ox do
   end
 
   describe '.create_document' do
-    it 'returns instance of Shale::Adapter::Ox::Document' do
+    it 'returns instance of Fido::Adapter::Ox::Document' do
       doc = described_class.create_document
-      expect(doc.class).to eq(Shale::Adapter::Ox::Document)
+      expect(doc.class).to eq(Fido::Adapter::Ox::Document)
     end
 
     it 'accepts one parameter and returns instance' do
       doc = described_class.create_document('foobar')
-      expect(doc.class).to eq(Shale::Adapter::Ox::Document)
+      expect(doc.class).to eq(Fido::Adapter::Ox::Document)
     end
   end
 end

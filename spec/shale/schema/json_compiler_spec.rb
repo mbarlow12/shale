@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-require 'shale/adapter/json'
-require 'shale/schema/json_compiler'
+require 'fido/adapter/json'
+require 'fido/schema/json_compiler'
 
-RSpec.describe Shale::Schema::JSONCompiler do
+RSpec.describe Fido::Schema::JSONCompiler do
   before(:each) do
-    Shale.json_adapter = Shale::Adapter::JSON
+    Fido.json_adapter = Fido::Adapter::JSON
   end
 
   describe '#as_models' do
@@ -26,7 +26,7 @@ RSpec.describe Shale::Schema::JSONCompiler do
       it 'raises error' do
         expect do
           described_class.new.as_models([schema])
-        end.to raise_error(Shale::SchemaError, "schema with id 'foo' already exists")
+        end.to raise_error(Fido::SchemaError, "schema with id 'foo' already exists")
       end
     end
 
@@ -48,7 +48,7 @@ RSpec.describe Shale::Schema::JSONCompiler do
       it 'raises error' do
         expect do
           described_class.new.as_models([schema])
-        end.to raise_error(Shale::SchemaError, "can't resolve reference '#/$defs/bar'")
+        end.to raise_error(Fido::SchemaError, "can't resolve reference '#/$defs/bar'")
       end
     end
 
@@ -107,7 +107,7 @@ RSpec.describe Shale::Schema::JSONCompiler do
         DATA
       end
 
-      it 'generates Shale models' do
+      it 'generates Fido models' do
         models = described_class.new.as_models([schema])
 
         expect(models.length).to eq(3)
@@ -116,7 +116,7 @@ RSpec.describe Shale::Schema::JSONCompiler do
         expect(models[0].name).to eq('Address2')
         expect(models[0].properties.length).to eq(1)
         expect(models[0].properties[0].mapping_name).to eq('city')
-        expect(models[0].properties[0].type).to be_a(Shale::Schema::Compiler::String)
+        expect(models[0].properties[0].type).to be_a(Fido::Schema::Compiler::String)
         expect(models[0].properties[0].collection?).to eq(false)
         expect(models[0].properties[0].default).to eq(nil)
 
@@ -124,7 +124,7 @@ RSpec.describe Shale::Schema::JSONCompiler do
         expect(models[1].name).to eq('Address1')
         expect(models[1].properties.length).to eq(1)
         expect(models[1].properties[0].mapping_name).to eq('street')
-        expect(models[1].properties[0].type).to be_a(Shale::Schema::Compiler::String)
+        expect(models[1].properties[0].type).to be_a(Fido::Schema::Compiler::String)
         expect(models[1].properties[0].collection?).to eq(false)
         expect(models[1].properties[0].default).to eq(nil)
 
@@ -134,90 +134,90 @@ RSpec.describe Shale::Schema::JSONCompiler do
         expect(props.length).to eq(17)
 
         expect(props[0].mapping_name).to eq('typeBoolean')
-        expect(props[0].type).to be_a(Shale::Schema::Compiler::Boolean)
+        expect(props[0].type).to be_a(Fido::Schema::Compiler::Boolean)
         expect(props[0].collection?).to eq(false)
         expect(props[0].default).to eq(nil)
 
         expect(props[1].mapping_name).to eq('typeDate')
-        expect(props[1].type).to be_a(Shale::Schema::Compiler::Date)
+        expect(props[1].type).to be_a(Fido::Schema::Compiler::Date)
         expect(props[1].collection?).to eq(false)
         expect(props[1].default).to eq(nil)
 
         expect(props[2].mapping_name).to eq('typeFloat')
-        expect(props[2].type).to be_a(Shale::Schema::Compiler::Float)
+        expect(props[2].type).to be_a(Fido::Schema::Compiler::Float)
         expect(props[2].collection?).to eq(false)
         expect(props[2].default).to eq(nil)
 
         expect(props[3].mapping_name).to eq('typeInteger')
-        expect(props[3].type).to be_a(Shale::Schema::Compiler::Integer)
+        expect(props[3].type).to be_a(Fido::Schema::Compiler::Integer)
         expect(props[3].collection?).to eq(false)
         expect(props[3].default).to eq(nil)
 
         expect(props[4].mapping_name).to eq('typeString')
-        expect(props[4].type).to be_a(Shale::Schema::Compiler::String)
+        expect(props[4].type).to be_a(Fido::Schema::Compiler::String)
         expect(props[4].collection?).to eq(false)
         expect(props[4].default).to eq(nil)
 
         expect(props[5].mapping_name).to eq('typeTime')
-        expect(props[5].type).to be_a(Shale::Schema::Compiler::Time)
+        expect(props[5].type).to be_a(Fido::Schema::Compiler::Time)
         expect(props[5].collection?).to eq(false)
         expect(props[5].default).to eq(nil)
 
         expect(props[6].mapping_name).to eq('typeUnknown')
-        expect(props[6].type).to be_a(Shale::Schema::Compiler::Value)
+        expect(props[6].type).to be_a(Fido::Schema::Compiler::Value)
         expect(props[6].collection?).to eq(false)
         expect(props[6].default).to eq(nil)
 
         expect(props[7].mapping_name).to eq('typeWithDefault')
-        expect(props[7].type).to be_a(Shale::Schema::Compiler::String)
+        expect(props[7].type).to be_a(Fido::Schema::Compiler::String)
         expect(props[7].collection?).to eq(false)
         expect(props[7].default).to eq('"foobar"')
 
         expect(props[8].mapping_name).to eq('typeMultipleWithNull')
-        expect(props[8].type).to be_a(Shale::Schema::Compiler::String)
+        expect(props[8].type).to be_a(Fido::Schema::Compiler::String)
         expect(props[8].collection?).to eq(false)
         expect(props[8].default).to eq(nil)
 
         expect(props[9].mapping_name).to eq('typeMultipleWithoutNull')
-        expect(props[9].type).to be_a(Shale::Schema::Compiler::Value)
+        expect(props[9].type).to be_a(Fido::Schema::Compiler::Value)
         expect(props[9].collection?).to eq(false)
         expect(props[9].default).to eq(nil)
 
         expect(props[10].mapping_name).to eq('typeArrayWithItems')
-        expect(props[10].type).to be_a(Shale::Schema::Compiler::String)
+        expect(props[10].type).to be_a(Fido::Schema::Compiler::String)
         expect(props[10].collection?).to eq(true)
         expect(props[10].default).to eq(nil)
 
         expect(props[11].mapping_name).to eq('typeArrayWithoutItems')
-        expect(props[11].type).to be_a(Shale::Schema::Compiler::Value)
+        expect(props[11].type).to be_a(Fido::Schema::Compiler::Value)
         expect(props[11].collection?).to eq(true)
         expect(props[11].default).to eq(nil)
 
         expect(props[12].mapping_name).to eq('schemaTrue')
-        expect(props[12].type).to be_a(Shale::Schema::Compiler::Value)
+        expect(props[12].type).to be_a(Fido::Schema::Compiler::Value)
         expect(props[12].collection?).to eq(false)
         expect(props[12].default).to eq(nil)
 
         expect(props[13].mapping_name).to eq('address')
-        expect(props[13].type).to be_a(Shale::Schema::Compiler::Complex)
+        expect(props[13].type).to be_a(Fido::Schema::Compiler::Complex)
         expect(props[13].type.name).to eq('Address1')
         expect(props[13].collection?).to eq(false)
         expect(props[13].default).to eq(nil)
 
         expect(props[14].mapping_name).to eq('shipping')
-        expect(props[14].type).to be_a(Shale::Schema::Compiler::Complex)
+        expect(props[14].type).to be_a(Fido::Schema::Compiler::Complex)
         expect(props[14].type.name).to eq('Address2')
         expect(props[14].collection?).to eq(false)
         expect(props[14].default).to eq(nil)
 
         expect(props[15].mapping_name).to eq('billing')
-        expect(props[15].type).to be_a(Shale::Schema::Compiler::Complex)
+        expect(props[15].type).to be_a(Fido::Schema::Compiler::Complex)
         expect(props[15].type.name).to eq('Address2')
         expect(props[15].collection?).to eq(false)
         expect(props[15].default).to eq(nil)
 
         expect(props[16].mapping_name).to eq('mailing')
-        expect(props[16].type).to be_a(Shale::Schema::Compiler::String)
+        expect(props[16].type).to be_a(Fido::Schema::Compiler::String)
         expect(props[16].collection?).to eq(false)
         expect(props[16].default).to eq(nil)
       end
@@ -267,7 +267,7 @@ RSpec.describe Shale::Schema::JSONCompiler do
         DATA
       end
 
-      it 'generates Shale models' do
+      it 'generates Fido models' do
         models = described_class.new.as_models([schema])
 
         expect(models.length).to eq(4)
@@ -347,7 +347,7 @@ RSpec.describe Shale::Schema::JSONCompiler do
         DATA
       end
 
-      it 'generates Shale models' do
+      it 'generates Fido models' do
         models = described_class.new.as_models([schema])
 
         expect(models.length).to eq(4)
@@ -415,7 +415,7 @@ RSpec.describe Shale::Schema::JSONCompiler do
         DATA
       end
 
-      it 'generates Shale models' do
+      it 'generates Fido models' do
         models = described_class.new.as_models([schema])
 
         expect(models.length).to eq(3)
@@ -462,7 +462,7 @@ RSpec.describe Shale::Schema::JSONCompiler do
         DATA
       end
 
-      it 'generates Shale models' do
+      it 'generates Fido models' do
         models = described_class.new.as_models([schema])
 
         expect(models.length).to eq(2)
@@ -528,7 +528,7 @@ RSpec.describe Shale::Schema::JSONCompiler do
         DATA
       end
 
-      it 'generates Shale models' do
+      it 'generates Fido models' do
         models = described_class.new.as_models([schema])
         expect(models[0].name).to eq('Root')
       end
@@ -543,7 +543,7 @@ RSpec.describe Shale::Schema::JSONCompiler do
         DATA
       end
 
-      it 'generates Shale models' do
+      it 'generates Fido models' do
         models = described_class.new.as_models([schema], root_name: 'foo')
         expect(models[0].name).to eq('Foo')
       end
@@ -563,7 +563,7 @@ RSpec.describe Shale::Schema::JSONCompiler do
         DATA
       end
 
-      it 'generates Shale models' do
+      it 'generates Fido models' do
         models = described_class.new.as_models([schema])
         expect(models[0].name).to eq('Bar')
       end
@@ -583,7 +583,7 @@ RSpec.describe Shale::Schema::JSONCompiler do
         DATA
       end
 
-      it 'generates Shale models' do
+      it 'generates Fido models' do
         models = described_class.new.as_models([schema], root_name: 'Foo')
         expect(models[0].name).to eq('Foo')
       end
@@ -753,10 +753,10 @@ RSpec.describe Shale::Schema::JSONCompiler do
 
     let(:result) do
       <<~DATA
-        require 'shale'
+        require 'fido'
 
-        class Root < Shale::Mapper
-          attribute :name, Shale::Type::String
+        class Root < Fido::Mapper
+          attribute :name, Fido::Type::String
 
           json do
             map 'name', to: :name
@@ -802,12 +802,12 @@ RSpec.describe Shale::Schema::JSONCompiler do
 
         let(:address) do
           <<~DATA
-            require 'shale'
+            require 'fido'
 
             module Foo
               module Bar
-                class Address < Shale::Mapper
-                  attribute :street, Shale::Type::String
+                class Address < Fido::Mapper
+                  attribute :street, Fido::Type::String
 
                   json do
                     map 'street', to: :street
@@ -820,14 +820,14 @@ RSpec.describe Shale::Schema::JSONCompiler do
 
         let(:person) do
           <<~DATA
-            require 'shale'
+            require 'fido'
 
             require_relative 'address'
 
             module Foo
               module Bar
-                class Person < Shale::Mapper
-                  attribute :name, Shale::Type::String
+                class Person < Fido::Mapper
+                  attribute :name, Fido::Type::String
                   attribute :address, Foo::Bar::Address
 
                   json do
@@ -885,11 +885,11 @@ RSpec.describe Shale::Schema::JSONCompiler do
 
         let(:address) do
           <<~DATA
-            require 'shale'
+            require 'fido'
 
             module Bar
-              class Address < Shale::Mapper
-                attribute :street, Shale::Type::String
+              class Address < Fido::Mapper
+                attribute :street, Fido::Type::String
 
                 json do
                   map 'street', to: :street
@@ -901,13 +901,13 @@ RSpec.describe Shale::Schema::JSONCompiler do
 
         let(:person) do
           <<~DATA
-            require 'shale'
+            require 'fido'
 
             require_relative '../bar/address'
 
             module Foo
-              class Person < Shale::Mapper
-                attribute :name, Shale::Type::String
+              class Person < Fido::Mapper
+                attribute :name, Fido::Type::String
                 attribute :address, Bar::Address
 
                 json do

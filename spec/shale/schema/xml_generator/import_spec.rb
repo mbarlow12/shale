@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-require 'shale'
-require 'shale/adapter/rexml'
-require 'shale/schema/xml_generator/import'
+require 'fido'
+require 'fido/adapter/rexml'
+require 'fido/schema/xml_generator/import'
 
-RSpec.describe Shale::Schema::XMLGenerator::Import do
+RSpec.describe Fido::Schema::XMLGenerator::Import do
   before(:each) do
-    Shale.xml_adapter = Shale::Adapter::REXML
+    Fido.xml_adapter = Fido::Adapter::REXML
   end
 
   describe '#namespace' do
@@ -18,9 +18,9 @@ RSpec.describe Shale::Schema::XMLGenerator::Import do
   describe '#as_xml' do
     context 'with namespace and schema location' do
       it 'returns XML node' do
-        doc = Shale.xml_adapter.create_document
+        doc = Fido.xml_adapter.create_document
         el = described_class.new('foo', 'bar').as_xml(doc)
-        result = Shale.xml_adapter.dump(el)
+        result = Fido.xml_adapter.dump(el)
 
         expect(result).to eq('<xs:import namespace="foo" schemaLocation="bar"/>')
       end
@@ -28,9 +28,9 @@ RSpec.describe Shale::Schema::XMLGenerator::Import do
 
     context 'without namespace' do
       it 'returns XML node' do
-        doc = Shale.xml_adapter.create_document
+        doc = Fido.xml_adapter.create_document
         el = described_class.new(nil, 'bar').as_xml(doc)
-        result = Shale.xml_adapter.dump(el)
+        result = Fido.xml_adapter.dump(el)
 
         expect(result).to eq('<xs:import schemaLocation="bar"/>')
       end
@@ -38,9 +38,9 @@ RSpec.describe Shale::Schema::XMLGenerator::Import do
 
     context 'without schema location' do
       it 'returns XML node' do
-        doc = Shale.xml_adapter.create_document
+        doc = Fido.xml_adapter.create_document
         el = described_class.new('foo', nil).as_xml(doc)
-        result = Shale.xml_adapter.dump(el)
+        result = Fido.xml_adapter.dump(el)
 
         expect(result).to eq('<xs:import namespace="foo"/>')
       end

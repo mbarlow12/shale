@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'shale/mapping/dict_group'
+require 'fido/mapping/dict_group'
 
-RSpec.describe Shale::Mapping::DictGroup do
+RSpec.describe Fido::Mapping::DictGroup do
   describe '#name' do
     it 'returns name' do
       obj = described_class.new(:foo, :bar)

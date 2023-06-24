@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 require 'nokogiri'
-require 'shale/adapter/nokogiri/document'
+require 'fido/adapter/nokogiri/document'
 
-RSpec.describe Shale::Adapter::Nokogiri::Document do
+RSpec.describe Fido::Adapter::Nokogiri::Document do
   subject(:doc) { described_class.new }
 
   describe '#intialize' do

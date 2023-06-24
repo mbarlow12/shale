@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
-require 'shale/mapping/group/dict_grouping'
-require 'shale/mapping/descriptor/dict'
+require 'fido/mapping/group/dict_grouping'
+require 'fido/mapping/descriptor/dict'
 
-RSpec.describe Shale::Mapping::Group::DictGrouping do
+RSpec.describe Fido::Mapping::Group::DictGrouping do
   describe '#add' do
     it 'adds a group for a mapping' do
       instance = described_class.new
 
-      mapping = Shale::Mapping::Descriptor::Dict.new(
+      mapping = Fido::Mapping::Descriptor::Dict.new(
         name: 'foo',
         attribute: nil,
         receiver: nil,
@@ -19,7 +19,7 @@ RSpec.describe Shale::Mapping::Group::DictGrouping do
 
       instance.add(mapping, 'val1')
 
-      mapping = Shale::Mapping::Descriptor::Dict.new(
+      mapping = Fido::Mapping::Descriptor::Dict.new(
         name: 'bar',
         attribute: nil,
         receiver: nil,
@@ -30,7 +30,7 @@ RSpec.describe Shale::Mapping::Group::DictGrouping do
 
       instance.add(mapping, 'val2')
 
-      mapping = Shale::Mapping::Descriptor::Dict.new(
+      mapping = Fido::Mapping::Descriptor::Dict.new(
         name: 'baz',
         attribute: nil,
         receiver: nil,
@@ -59,7 +59,7 @@ RSpec.describe Shale::Mapping::Group::DictGrouping do
     it 'iterates over groups' do
       instance = described_class.new
 
-      mapping = Shale::Mapping::Descriptor::Dict.new(
+      mapping = Fido::Mapping::Descriptor::Dict.new(
         name: 'foo',
         attribute: nil,
         receiver: nil,
@@ -70,7 +70,7 @@ RSpec.describe Shale::Mapping::Group::DictGrouping do
 
       instance.add(mapping, 'val1')
 
-      mapping = Shale::Mapping::Descriptor::Dict.new(
+      mapping = Fido::Mapping::Descriptor::Dict.new(
         name: 'bar',
         attribute: nil,
         receiver: nil,
@@ -81,7 +81,7 @@ RSpec.describe Shale::Mapping::Group::DictGrouping do
 
       instance.add(mapping, 'val2')
 
-      mapping = Shale::Mapping::Descriptor::Dict.new(
+      mapping = Fido::Mapping::Descriptor::Dict.new(
         name: 'baz',
         attribute: nil,
         receiver: nil,

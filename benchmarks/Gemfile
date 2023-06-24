@@ -10,4 +10,4 @@ gem 'ox'
 gem 'representable'
 gem 'rexml'
 
-gem 'shale', path: '../'
+gem 'fido', path: '../'

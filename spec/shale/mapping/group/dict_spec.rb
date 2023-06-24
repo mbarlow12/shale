@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'shale/mapping/group/dict'
+require 'fido/mapping/group/dict'
 
-RSpec.describe Shale::Mapping::Group::Dict do
+RSpec.describe Fido::Mapping::Group::Dict do
   describe '#method_from' do
     it 'returns a symbol' do
       result = described_class.new(:foo, :bar)

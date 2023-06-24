@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'shale/utils'
+require 'fido/utils'
 
-RSpec.describe Shale::Utils do
+RSpec.describe Fido::Utils do
   describe '.upcase_first' do
     it 'returns value' do
       expect(described_class.upcase_first(nil)).to eq('')

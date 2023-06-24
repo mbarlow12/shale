@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'shale/mapping/delegates'
+require 'fido/mapping/delegates'
 
-RSpec.describe Shale::Mapping::Delegates::Delegate do
+RSpec.describe Fido::Mapping::Delegates::Delegate do
   describe '#receiver_attribute' do
     it 'returns receiver_attribute' do
       expect(described_class.new(:foo, :bar, :baz).receiver_attribute).to eq(:foo)
@@ -22,7 +22,7 @@ RSpec.describe Shale::Mapping::Delegates::Delegate do
   end
 end
 
-RSpec.describe Shale::Mapping::Delegates do
+RSpec.describe Fido::Mapping::Delegates do
   describe '#add' do
     it 'adds a delegate' do
       obj = described_class.new

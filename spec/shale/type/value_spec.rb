@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require 'shale/type/value'
-require 'shale/adapter/rexml'
+require 'fido/type/value'
+require 'fido/adapter/rexml'
 require 'rexml/document'
 
-RSpec.describe Shale::Type::Value do
+RSpec.describe Fido::Type::Value do
   describe '.cast' do
     it 'returns value' do
       expect(described_class.cast(123)).to eq(123)
@@ -76,7 +76,7 @@ RSpec.describe Shale::Type::Value do
       element = REXML::Element.new('name')
       element.add_text('foobar')
 
-      node = Shale::Adapter::REXML::Node.new(element)
+      node = Fido::Adapter::REXML::Node.new(element)
 
       expect(described_class.of_xml(node)).to eq('foobar')
     end
@@ -91,7 +91,7 @@ RSpec.describe Shale::Type::Value do
   describe '.as_xml' do
     context 'with no cdata' do
       it 'converts text to XML node' do
-        doc = Shale::Adapter::REXML.create_document
+        doc = Fido::Adapter::REXML.create_document
         res = described_class.as_xml(123, 'foobar', doc).to_s
         expect(res).to eq('<foobar>123</foobar>')
       end
@@ -99,7 +99,7 @@ RSpec.describe Shale::Type::Value do
 
     context 'with cdata set to true' do
       it 'converts text to XML node' do
-        doc = Shale::Adapter::REXML.create_document
+        doc = Fido::Adapter::REXML.create_document
         res = described_class.as_xml(123, 'foobar', doc, true).to_s
         expect(res).to eq('<foobar><![CDATA[123]]></foobar>')
       end

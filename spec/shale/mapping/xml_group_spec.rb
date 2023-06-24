@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'shale/mapping/xml_group'
+require 'fido/mapping/xml_group'
 
-RSpec.describe Shale::Mapping::XmlGroup do
+RSpec.describe Fido::Mapping::XmlGroup do
   describe '#name' do
     it 'returns name' do
       obj = described_class.new(:foo, :bar)
@@ -17,7 +17,7 @@ RSpec.describe Shale::Mapping::XmlGroup do
 
         expect do
           obj.map_element('foo', namespace: nil, prefix: 'bar')
-        end.to raise_error(Shale::IncorrectMappingArgumentsError)
+        end.to raise_error(Fido::IncorrectMappingArgumentsError)
       end
     end
 
@@ -27,7 +27,7 @@ RSpec.describe Shale::Mapping::XmlGroup do
 
         expect do
           obj.map_element('foo', namespace: 'bar', prefix: nil)
-        end.to raise_error(Shale::IncorrectMappingArgumentsError)
+        end.to raise_error(Fido::IncorrectMappingArgumentsError)
       end
     end
 
@@ -87,7 +87,7 @@ RSpec.describe Shale::Mapping::XmlGroup do
 
         expect do
           obj.map_attribute('foo', namespace: nil, prefix: 'bar')
-        end.to raise_error(Shale::IncorrectMappingArgumentsError)
+        end.to raise_error(Fido::IncorrectMappingArgumentsError)
       end
     end
 
@@ -97,7 +97,7 @@ RSpec.describe Shale::Mapping::XmlGroup do
 
         expect do
           obj.map_attribute('foo', namespace: 'bar', prefix: nil)
-        end.to raise_error(Shale::IncorrectMappingArgumentsError)
+        end.to raise_error(Fido::IncorrectMappingArgumentsError)
       end
     end
 

@@ -2,7 +2,38 @@
 # frozen_string_literal: true
 
 require 'bundler/setup'
-require 'shale'
-
+require 'fido'
+require 'json'
 require 'irb'
+
+def epjson
+  JSON.load_file!('energyplus.schema.epjson')['properties']
+end
+
+class Hash
+  def walk
+    stack = map { |key, value| [[key], value] }
+    until stack.empty?
+      keys, value = stack.shift
+      yield(keys, value)
+      if value.is_a?(Hash)
+        value.each { |sub_key, sub_value| stack.unshift([keys.dup << sub_key, sub_value])}
+      elsif value.is_a?(Enumerable)
+        value.each_with_index { |val, i| stack.unshift([keys.dup << i, val]) }
+      end
+    end
+  end
+end
+
+def get_enum_parents(schema)
+  parents = {}
+  schema.walk do |keys, value|
+    if keys.last == 'enum'
+      id = value.sort.join('.')
+      parents[id] ||= []
+      parents[id] << "#{keys.first}.#{keys[-2]}"
+    end
+  end
+  parents.transform_values { |props| props.uniq.sort }
+end
 IRB.start(__FILE__)

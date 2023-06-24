@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
-require 'shale'
-require 'shale/adapter/rexml'
+require 'fido'
+require 'fido/adapter/rexml'
 require 'tomlib'
 
 module ComplexSpec__UsingBlock # rubocop:disable Naming/ClassAndModuleCamelCase
-  class GroupWithoutContext < Shale::Mapper
-    attribute :one, Shale::Type::String
-    attribute :two, Shale::Type::String
-    attribute :three, Shale::Type::String
+  class GroupWithoutContext < Fido::Mapper
+    attribute :one, Fido::Type::String
+    attribute :two, Fido::Type::String
+    attribute :three, Fido::Type::String
 
     hsh do
       group from: :attrs_from_dict, to: :attrs_to_dict do
@@ -80,10 +80,10 @@ module ComplexSpec__UsingBlock # rubocop:disable Naming/ClassAndModuleCamelCase
     end
   end
 
-  class GroupWithContext < Shale::Mapper
-    attribute :one, Shale::Type::String
-    attribute :two, Shale::Type::String
-    attribute :three, Shale::Type::String
+  class GroupWithContext < Fido::Mapper
+    attribute :one, Fido::Type::String
+    attribute :two, Fido::Type::String
+    attribute :three, Fido::Type::String
 
     hsh do
       group from: :attrs_from_dict, to: :attrs_to_dict do
@@ -156,13 +156,13 @@ module ComplexSpec__UsingBlock # rubocop:disable Naming/ClassAndModuleCamelCase
   end
 end
 
-RSpec.describe Shale::Type::Complex do
+RSpec.describe Fido::Type::Complex do
   before(:each) do
-    Shale.json_adapter = Shale::Adapter::JSON
-    Shale.yaml_adapter = YAML
-    Shale.toml_adapter = Tomlib
-    Shale.csv_adapter = Shale::Adapter::CSV
-    Shale.xml_adapter = Shale::Adapter::REXML
+    Fido.json_adapter = Fido::Adapter::JSON
+    Fido.yaml_adapter = YAML
+    Fido.toml_adapter = Tomlib
+    Fido.csv_adapter = Fido::Adapter::CSV
+    Fido.xml_adapter = Fido::Adapter::REXML
   end
 
   context 'with using block' do

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'shale'
-require 'shale/adapter/rexml'
+require 'fido'
+require 'fido/adapter/rexml'
 require 'tomlib'
 
 module ComplexSpec__CustomModels # rubocop:disable Naming/ClassAndModuleCamelCase
@@ -22,32 +22,32 @@ module ComplexSpec__CustomModels # rubocop:disable Naming/ClassAndModuleCamelCas
     end
   end
 
-  class ChildMapper < Shale::Mapper
+  class ChildMapper < Fido::Mapper
     model Child
 
-    attribute :one, Shale::Type::String
+    attribute :one, Fido::Type::String
   end
 
-  class ParentMapper < Shale::Mapper
+  class ParentMapper < Fido::Mapper
     model Parent
 
-    attribute :one, Shale::Type::String
+    attribute :one, Fido::Type::String
     attribute :child, ChildMapper
   end
 
-  class ParentMapperCsv < Shale::Mapper
+  class ParentMapperCsv < Fido::Mapper
     model Parent
-    attribute :one, Shale::Type::String
+    attribute :one, Fido::Type::String
   end
 end
 
-RSpec.describe Shale::Type::Complex do
+RSpec.describe Fido::Type::Complex do
   before(:each) do
-    Shale.json_adapter = Shale::Adapter::JSON
-    Shale.yaml_adapter = YAML
-    Shale.toml_adapter = Tomlib
-    Shale.csv_adapter = Shale::Adapter::CSV
-    Shale.xml_adapter = Shale::Adapter::REXML
+    Fido.json_adapter = Fido::Adapter::JSON
+    Fido.yaml_adapter = YAML
+    Fido.toml_adapter = Tomlib
+    Fido.csv_adapter = Fido::Adapter::CSV
+    Fido.xml_adapter = Fido::Adapter::REXML
   end
 
   context 'with custom models' do
@@ -93,7 +93,7 @@ RSpec.describe Shale::Type::Complex do
 
             expect do
               parent_mapper.to_hash('')
-            end.to raise_error(Shale::IncorrectModelError, msg)
+            end.to raise_error(Fido::IncorrectModelError, msg)
           end
         end
 
@@ -180,7 +180,7 @@ RSpec.describe Shale::Type::Complex do
 
             expect do
               parent_mapper.to_json('')
-            end.to raise_error(Shale::IncorrectModelError, msg)
+            end.to raise_error(Fido::IncorrectModelError, msg)
           end
         end
 
@@ -258,7 +258,7 @@ RSpec.describe Shale::Type::Complex do
 
             expect do
               parent_mapper.to_yaml('')
-            end.to raise_error(Shale::IncorrectModelError, msg)
+            end.to raise_error(Fido::IncorrectModelError, msg)
           end
         end
 
@@ -313,7 +313,7 @@ RSpec.describe Shale::Type::Complex do
 
             expect do
               parent_mapper.to_toml('')
-            end.to raise_error(Shale::IncorrectModelError, msg)
+            end.to raise_error(Fido::IncorrectModelError, msg)
           end
         end
 
@@ -371,7 +371,7 @@ RSpec.describe Shale::Type::Complex do
 
             expect do
               parent_mapper.to_csv('')
-            end.to raise_error(Shale::IncorrectModelError, msg)
+            end.to raise_error(Fido::IncorrectModelError, msg)
           end
         end
 
@@ -428,7 +428,7 @@ RSpec.describe Shale::Type::Complex do
 
             expect do
               parent_mapper.to_xml('')
-            end.to raise_error(Shale::IncorrectModelError, msg)
+            end.to raise_error(Fido::IncorrectModelError, msg)
           end
         end
 

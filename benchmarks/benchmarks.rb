@@ -31,7 +31,7 @@ Benchmark.ips do |x|
     FromHash.build_report(JSON.parse(json))
   end
 
-  x.report('Shale') do
+  x.report('Fido') do
     ReportMapper.from_json(json)
   end
 
@@ -51,7 +51,7 @@ Benchmark.ips do |x|
     ToHash.build_report(report)
   end
 
-  x.report('Shale') do
+  x.report('Fido') do
     ReportMapper.to_json(report)
   end
 
@@ -69,7 +69,7 @@ Benchmark.ips do |x|
     FromHash.build_report(hash)
   end
 
-  x.report('Shale') do
+  x.report('Fido') do
     ReportMapper.from_hash(hash)
   end
 
@@ -89,7 +89,7 @@ Benchmark.ips do |x|
     ToHash.build_report(report)
   end
 
-  x.report('Shale') do
+  x.report('Fido') do
     ReportMapper.to_hash(report)
   end
 
@@ -102,8 +102,8 @@ end
 
 puts "\n\nfrom_xml (Nokogiri adapter)\n\n"
 
-require 'shale/adapter/nokogiri'
-Shale.xml_adapter = Shale::Adapter::Nokogiri
+require 'fido/adapter/nokogiri'
+Fido.xml_adapter = Fido::Adapter::Nokogiri
 
 Benchmark.ips do |x|
   x.report('By hand (CSS)') do
@@ -120,7 +120,7 @@ Benchmark.ips do |x|
     BuildNokogiriXpath.build_report(doc)
   end
 
-  x.report('Shale') do
+  x.report('Fido') do
     ReportMapper.from_xml(xml)
   end
 
@@ -133,8 +133,8 @@ end
 
 puts "\n\nfrom_xml (Ox adapter)\n\n"
 
-require 'shale/adapter/ox'
-Shale.xml_adapter = Shale::Adapter::Ox
+require 'fido/adapter/ox'
+Fido.xml_adapter = Fido::Adapter::Ox
 
 Benchmark.ips do |x|
   x.report('By hand') do
@@ -142,7 +142,7 @@ Benchmark.ips do |x|
     BuildOx.build_report(doc)
   end
 
-  x.report('Shale') do
+  x.report('Fido') do
     ReportMapper.from_xml(xml)
   end
 
@@ -151,8 +151,8 @@ end
 
 puts "\n\nfrom_xml (REXML adapter)\n\n"
 
-require 'shale/adapter/rexml'
-Shale.xml_adapter = Shale::Adapter::REXML
+require 'fido/adapter/rexml'
+Fido.xml_adapter = Fido::Adapter::REXML
 
 Benchmark.ips do |x|
   x.report('By hand') do
@@ -160,7 +160,7 @@ Benchmark.ips do |x|
     BuildRexml.build_report(doc)
   end
 
-  x.report('Shale') do
+  x.report('Fido') do
     ReportMapper.from_xml(xml)
   end
 

@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 require 'rexml'
-require 'shale/adapter/rexml/document'
+require 'fido/adapter/rexml/document'
 
-RSpec.describe Shale::Adapter::REXML::Document do
+RSpec.describe Fido::Adapter::REXML::Document do
   subject(:doc) { described_class.new }
 
   describe '#doc' do

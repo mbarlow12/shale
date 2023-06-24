@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 require 'rexml'
-require 'shale/adapter/rexml/node'
+require 'fido/adapter/rexml/node'
 
-RSpec.describe Shale::Adapter::REXML::Node do
+RSpec.describe Fido::Adapter::REXML::Node do
   describe '#namespaces' do
     context 'without namespaces' do
       it 'returns empty hash' do

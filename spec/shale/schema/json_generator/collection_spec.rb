@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require 'shale/schema/json_generator/boolean'
-require 'shale/schema/json_generator/collection'
+require 'fido/schema/json_generator/boolean'
+require 'fido/schema/json_generator/collection'
 
-RSpec.describe Shale::Schema::JSONGenerator::Collection do
-  let(:type) { Shale::Schema::JSONGenerator::Boolean.new('foo') }
+RSpec.describe Fido::Schema::JSONGenerator::Collection do
+  let(:type) { Fido::Schema::JSONGenerator::Boolean.new('foo') }
 
   describe '#name' do
     it 'returns name of the wrapped type' do

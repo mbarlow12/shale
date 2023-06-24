@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-require 'shale'
-require 'shale/adapter/rexml'
-require 'shale/schema/xml_generator/typed_element'
+require 'fido'
+require 'fido/adapter/rexml'
+require 'fido/schema/xml_generator/typed_element'
 
-RSpec.describe Shale::Schema::XMLGenerator::TypedElement do
+RSpec.describe Fido::Schema::XMLGenerator::TypedElement do
   before(:each) do
-    Shale.xml_adapter = Shale::Adapter::REXML
+    Fido.xml_adapter = Fido::Adapter::REXML
   end
 
   describe '#name' do
@@ -18,9 +18,9 @@ RSpec.describe Shale::Schema::XMLGenerator::TypedElement do
   describe '#as_xml' do
     context 'with default' do
       it 'returns XML node' do
-        doc = Shale.xml_adapter.create_document
+        doc = Fido.xml_adapter.create_document
         el = described_class.new(name: 'foo', type: 'string', default: 'bar').as_xml(doc)
-        result = Shale.xml_adapter.dump(el)
+        result = Fido.xml_adapter.dump(el)
 
         expected = '<xs:element default="bar" minOccurs="0" name="foo" type="string"/>'
         expect(result).to eq(expected)
@@ -29,9 +29,9 @@ RSpec.describe Shale::Schema::XMLGenerator::TypedElement do
 
     context 'with collection' do
       it 'returns XML node' do
-        doc = Shale.xml_adapter.create_document
+        doc = Fido.xml_adapter.create_document
         el = described_class.new(name: 'foo', type: 'string', collection: true).as_xml(doc)
-        result = Shale.xml_adapter.dump(el)
+        result = Fido.xml_adapter.dump(el)
 
         expected = '<xs:element maxOccurs="unbounded" minOccurs="0" name="foo" type="string"/>'
         expect(result).to eq(expected)
@@ -40,9 +40,9 @@ RSpec.describe Shale::Schema::XMLGenerator::TypedElement do
 
     context 'with required' do
       it 'returns XML node' do
-        doc = Shale.xml_adapter.create_document
+        doc = Fido.xml_adapter.create_document
         el = described_class.new(name: 'foo', type: 'string', required: true).as_xml(doc)
-        result = Shale.xml_adapter.dump(el)
+        result = Fido.xml_adapter.dump(el)
 
         expect(result).to eq('<xs:element name="foo" type="string"/>')
       end
@@ -50,9 +50,9 @@ RSpec.describe Shale::Schema::XMLGenerator::TypedElement do
 
     context 'without modifiers' do
       it 'returns XML node' do
-        doc = Shale.xml_adapter.create_document
+        doc = Fido.xml_adapter.create_document
         el = described_class.new(name: 'foo', type: 'string').as_xml(doc)
-        result = Shale.xml_adapter.dump(el)
+        result = Fido.xml_adapter.dump(el)
 
         expect(result).to eq('<xs:element minOccurs="0" name="foo" type="string"/>')
       end

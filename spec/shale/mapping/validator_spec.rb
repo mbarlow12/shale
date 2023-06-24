@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
-require 'shale/mapping/validator'
+require 'fido/mapping/validator'
 
-RSpec.describe Shale::Mapping::Validator do
+RSpec.describe Fido::Mapping::Validator do
   describe '.validate_arguments' do
     context 'when :to and :using is nil' do
       it 'raises an error' do
         expect do
           described_class.validate_arguments('key', nil, nil, nil)
-        end.to raise_error(Shale::IncorrectMappingArgumentsError, /to or :using argument/)
+        end.to raise_error(Fido::IncorrectMappingArgumentsError, /to or :using argument/)
       end
     end
 
@@ -16,7 +16,7 @@ RSpec.describe Shale::Mapping::Validator do
       it 'raises an error' do
         expect do
           described_class.validate_arguments('key', nil, :foo, {})
-        end.to raise_error(Shale::IncorrectMappingArgumentsError, /receiver argument/)
+        end.to raise_error(Fido::IncorrectMappingArgumentsError, /receiver argument/)
       end
     end
 
@@ -24,7 +24,7 @@ RSpec.describe Shale::Mapping::Validator do
       it 'raises an error' do
         expect do
           described_class.validate_arguments('key', nil, nil, { to: :foo })
-        end.to raise_error(Shale::IncorrectMappingArgumentsError, /requires :to and :from/)
+        end.to raise_error(Fido::IncorrectMappingArgumentsError, /requires :to and :from/)
       end
     end
 
@@ -32,7 +32,7 @@ RSpec.describe Shale::Mapping::Validator do
       it 'raises an error' do
         expect do
           described_class.validate_arguments('key', nil, nil, { from: :foo })
-        end.to raise_error(Shale::IncorrectMappingArgumentsError, /requires :to and :from/)
+        end.to raise_error(Fido::IncorrectMappingArgumentsError, /requires :to and :from/)
       end
     end
 
@@ -70,7 +70,7 @@ RSpec.describe Shale::Mapping::Validator do
       it 'raises an error' do
         expect do
           described_class.validate_namespace('key', 'nsp', nil)
-        end.to raise_error(Shale::IncorrectMappingArgumentsError)
+        end.to raise_error(Fido::IncorrectMappingArgumentsError)
       end
     end
 
@@ -78,7 +78,7 @@ RSpec.describe Shale::Mapping::Validator do
       it 'raises an error' do
         expect do
           described_class.validate_namespace('key', 'nsp', :undefined)
-        end.to raise_error(Shale::IncorrectMappingArgumentsError)
+        end.to raise_error(Fido::IncorrectMappingArgumentsError)
       end
     end
 
@@ -86,7 +86,7 @@ RSpec.describe Shale::Mapping::Validator do
       it 'raises an error' do
         expect do
           described_class.validate_namespace('key', nil, 'pfx')
-        end.to raise_error(Shale::IncorrectMappingArgumentsError)
+        end.to raise_error(Fido::IncorrectMappingArgumentsError)
       end
     end
 
@@ -94,7 +94,7 @@ RSpec.describe Shale::Mapping::Validator do
       it 'raises an error' do
         expect do
           described_class.validate_namespace('key', :undefined, 'pfx')
-        end.to raise_error(Shale::IncorrectMappingArgumentsError)
+        end.to raise_error(Fido::IncorrectMappingArgumentsError)
       end
     end
 

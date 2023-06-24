@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require 'shale/schema/compiler/property'
-require 'shale/schema/compiler/value'
+require 'fido/schema/compiler/property'
+require 'fido/schema/compiler/value'
 
-RSpec.describe Shale::Schema::Compiler::Property do
-  let(:type) { Shale::Schema::Compiler::Value.new }
+RSpec.describe Fido::Schema::Compiler::Property do
+  let(:type) { Fido::Schema::Compiler::Value.new }
 
   describe '#mapping_name' do
     it 'returns property name' do

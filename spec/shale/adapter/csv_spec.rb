@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'shale/adapter/csv'
+require 'fido/adapter/csv'
 
-RSpec.describe Shale::Adapter::CSV do
+RSpec.describe Fido::Adapter::CSV do
   describe '.load' do
     let(:headers) { %w[Foo Bar] }
 

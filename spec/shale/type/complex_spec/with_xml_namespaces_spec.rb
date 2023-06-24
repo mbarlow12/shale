@@ -1,17 +1,17 @@
 # frozen_string_literal: true
 
-require 'shale'
-require 'shale/adapter/rexml'
+require 'fido'
+require 'fido/adapter/rexml'
 require 'tomlib'
 
 module ComplexSpec__XmlNamespaces # rubocop:disable Naming/ClassAndModuleCamelCase
-  class NoNsDeclaration < Shale::Mapper
-    attribute :attr_no_ns, Shale::Type::String
-    attribute :attr_ns1, Shale::Type::String
-    attribute :attr_ns2, Shale::Type::String
-    attribute :el_no_ns, Shale::Type::String
-    attribute :el_ns1, Shale::Type::String
-    attribute :el_ns2, Shale::Type::String
+  class NoNsDeclaration < Fido::Mapper
+    attribute :attr_no_ns, Fido::Type::String
+    attribute :attr_ns1, Fido::Type::String
+    attribute :attr_ns2, Fido::Type::String
+    attribute :el_no_ns, Fido::Type::String
+    attribute :el_ns1, Fido::Type::String
+    attribute :el_ns2, Fido::Type::String
 
     xml do
       root 'no_ns_declaration'
@@ -26,13 +26,13 @@ module ComplexSpec__XmlNamespaces # rubocop:disable Naming/ClassAndModuleCamelCa
     end
   end
 
-  class NsDeclaration < Shale::Mapper
-    attribute :attr_no_ns, Shale::Type::String
-    attribute :attr_ns1, Shale::Type::String
-    attribute :attr_ns2, Shale::Type::String
-    attribute :el_no_ns, Shale::Type::String
-    attribute :el_ns1, Shale::Type::String
-    attribute :el_ns2, Shale::Type::String
+  class NsDeclaration < Fido::Mapper
+    attribute :attr_no_ns, Fido::Type::String
+    attribute :attr_ns1, Fido::Type::String
+    attribute :attr_ns2, Fido::Type::String
+    attribute :el_no_ns, Fido::Type::String
+    attribute :el_ns1, Fido::Type::String
+    attribute :el_ns2, Fido::Type::String
 
     xml do
       root 'ns_declaration'
@@ -49,13 +49,13 @@ module ComplexSpec__XmlNamespaces # rubocop:disable Naming/ClassAndModuleCamelCa
   end
 end
 
-RSpec.describe Shale::Type::Complex do
+RSpec.describe Fido::Type::Complex do
   before(:each) do
-    Shale.json_adapter = Shale::Adapter::JSON
-    Shale.yaml_adapter = YAML
-    Shale.toml_adapter = Tomlib
-    Shale.csv_adapter = Shale::Adapter::CSV
-    Shale.xml_adapter = Shale::Adapter::REXML
+    Fido.json_adapter = Fido::Adapter::JSON
+    Fido.yaml_adapter = YAML
+    Fido.toml_adapter = Tomlib
+    Fido.csv_adapter = Fido::Adapter::CSV
+    Fido.xml_adapter = Fido::Adapter::REXML
   end
 
   context 'with xml namespaces' do

@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-require 'shale/error'
+require 'fido/error'
 
-RSpec.describe Shale::UnknownAttributeError do
+RSpec.describe Fido::UnknownAttributeError do
   describe 'inheritance' do
     it 'inherits from NoMethodError' do
-      expect(Shale::UnknownAttributeError < NoMethodError).to eq(true)
+      expect(Fido::UnknownAttributeError < NoMethodError).to eq(true)
     end
   end
 
@@ -17,10 +17,10 @@ RSpec.describe Shale::UnknownAttributeError do
   end
 end
 
-RSpec.describe Shale::DefaultNotCallableError do
+RSpec.describe Fido::DefaultNotCallableError do
   describe 'inheritance' do
-    it 'inherits from Shale::ShaleError' do
-      expect(Shale::DefaultNotCallableError < Shale::ShaleError).to eq(true)
+    it 'inherits from Fido::FidoError' do
+      expect(Fido::DefaultNotCallableError < Fido::FidoError).to eq(true)
     end
   end
 
@@ -32,58 +32,58 @@ RSpec.describe Shale::DefaultNotCallableError do
   end
 end
 
-RSpec.describe Shale::IncorrectModelError do
+RSpec.describe Fido::IncorrectModelError do
   describe 'inheritance' do
-    it 'inherits from Shale::ShaleError' do
-      expect(Shale::IncorrectModelError < Shale::ShaleError).to eq(true)
+    it 'inherits from Fido::FidoError' do
+      expect(Fido::IncorrectModelError < Fido::FidoError).to eq(true)
     end
   end
 end
 
-RSpec.describe Shale::IncorrectMappingArgumentsError do
+RSpec.describe Fido::IncorrectMappingArgumentsError do
   describe 'inheritance' do
-    it 'inherits from Shale::ShaleError' do
-      expect(Shale::IncorrectMappingArgumentsError < Shale::ShaleError).to eq(true)
+    it 'inherits from Fido::FidoError' do
+      expect(Fido::IncorrectMappingArgumentsError < Fido::FidoError).to eq(true)
     end
   end
 end
 
-RSpec.describe Shale::NotAShaleMapperError do
+RSpec.describe Fido::NotAFidoMapperError do
   describe 'inheritance' do
-    it 'inherits from Shale::ShaleError' do
-      expect(Shale::NotAShaleMapperError < Shale::ShaleError).to eq(true)
+    it 'inherits from Fido::FidoError' do
+      expect(Fido::NotAFidoMapperError < Fido::FidoError).to eq(true)
     end
   end
 end
 
-RSpec.describe Shale::AttributeNotDefinedError do
+RSpec.describe Fido::AttributeNotDefinedError do
   describe 'inheritance' do
-    it 'inherits from Shale::ShaleError' do
-      expect(Shale::AttributeNotDefinedError < Shale::ShaleError).to eq(true)
+    it 'inherits from Fido::FidoError' do
+      expect(Fido::AttributeNotDefinedError < Fido::FidoError).to eq(true)
     end
   end
 end
 
-RSpec.describe Shale::SchemaError do
+RSpec.describe Fido::SchemaError do
   describe 'inheritance' do
-    it 'inherits from Shale::ShaleError' do
-      expect(Shale::SchemaError < Shale::ShaleError).to eq(true)
+    it 'inherits from Fido::FidoError' do
+      expect(Fido::SchemaError < Fido::FidoError).to eq(true)
     end
   end
 end
 
-RSpec.describe Shale::ParseError do
+RSpec.describe Fido::ParseError do
   describe 'inheritance' do
-    it 'inherits from Shale::ShaleError' do
-      expect(Shale::ParseError < Shale::ShaleError).to eq(true)
+    it 'inherits from Fido::FidoError' do
+      expect(Fido::ParseError < Fido::FidoError).to eq(true)
     end
   end
 end
 
-RSpec.describe Shale::AdapterError do
+RSpec.describe Fido::AdapterError do
   describe 'inheritance' do
-    it 'inherits from Shale::ShaleError' do
-      expect(Shale::AdapterError < Shale::ShaleError).to eq(true)
+    it 'inherits from Fido::FidoError' do
+      expect(Fido::AdapterError < Fido::FidoError).to eq(true)
     end
   end
 end

@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
-require 'shale'
-require 'shale/adapter/rexml'
+require 'fido'
+require 'fido/adapter/rexml'
 require 'tomlib'
 
 module ComplexSpec__OnlyExceptOptions # rubocop:disable Naming/ClassAndModuleCamelCase
-  class Street < Shale::Mapper
-    attribute :name, Shale::Type::String
-    attribute :house_no, Shale::Type::String
-    attribute :flat_no, Shale::Type::String
+  class Street < Fido::Mapper
+    attribute :name, Fido::Type::String
+    attribute :house_no, Fido::Type::String
+    attribute :flat_no, Fido::Type::String
 
     xml do
       root 'Street'
@@ -19,9 +19,9 @@ module ComplexSpec__OnlyExceptOptions # rubocop:disable Naming/ClassAndModuleCam
     end
   end
 
-  class Address < Shale::Mapper
-    attribute :city, Shale::Type::String
-    attribute :zip, Shale::Type::String
+  class Address < Fido::Mapper
+    attribute :city, Fido::Type::String
+    attribute :zip, Fido::Type::String
     attribute :street, Street
 
     xml do
@@ -33,10 +33,10 @@ module ComplexSpec__OnlyExceptOptions # rubocop:disable Naming/ClassAndModuleCam
     end
   end
 
-  class Car < Shale::Mapper
-    attribute :brand, Shale::Type::String
-    attribute :model, Shale::Type::String
-    attribute :engine, Shale::Type::String
+  class Car < Fido::Mapper
+    attribute :brand, Fido::Type::String
+    attribute :model, Fido::Type::String
+    attribute :engine, Fido::Type::String
 
     xml do
       root 'Car'
@@ -47,10 +47,10 @@ module ComplexSpec__OnlyExceptOptions # rubocop:disable Naming/ClassAndModuleCam
     end
   end
 
-  class Person < Shale::Mapper
-    attribute :first_name, Shale::Type::String
-    attribute :last_name, Shale::Type::String
-    attribute :age, Shale::Type::Integer
+  class Person < Fido::Mapper
+    attribute :first_name, Fido::Type::String
+    attribute :last_name, Fido::Type::String
+    attribute :age, Fido::Type::Integer
     attribute :address, Address
     attribute :car, Car, collection: true
 
@@ -72,13 +72,13 @@ module ComplexSpec__OnlyExceptOptions # rubocop:disable Naming/ClassAndModuleCam
   end
 end
 
-RSpec.describe Shale::Type::Complex do
+RSpec.describe Fido::Type::Complex do
   before(:each) do
-    Shale.json_adapter = Shale::Adapter::JSON
-    Shale.yaml_adapter = YAML
-    Shale.toml_adapter = Tomlib
-    Shale.csv_adapter = Shale::Adapter::CSV
-    Shale.xml_adapter = Shale::Adapter::REXML
+    Fido.json_adapter = Fido::Adapter::JSON
+    Fido.yaml_adapter = YAML
+    Fido.toml_adapter = Tomlib
+    Fido.csv_adapter = Fido::Adapter::CSV
+    Fido.xml_adapter = Fido::Adapter::REXML
   end
 
   context 'with only/except options' do

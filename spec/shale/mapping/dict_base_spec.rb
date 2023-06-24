@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'shale/mapping/dict_base'
+require 'fido/mapping/dict_base'
 
-RSpec.describe Shale::Mapping::DictBase do
+RSpec.describe Fido::Mapping::DictBase do
   describe '#keys' do
     it 'returns keys hash' do
       obj = described_class.new
@@ -17,7 +17,7 @@ RSpec.describe Shale::Mapping::DictBase do
 
         expect do
           obj.map('foo')
-        end.to raise_error(Shale::IncorrectMappingArgumentsError)
+        end.to raise_error(Fido::IncorrectMappingArgumentsError)
       end
     end
 
@@ -37,7 +37,7 @@ RSpec.describe Shale::Mapping::DictBase do
 
         expect do
           obj.map('key', to: nil, receiver: :foo, using: {})
-        end.to raise_error(Shale::IncorrectMappingArgumentsError)
+        end.to raise_error(Fido::IncorrectMappingArgumentsError)
       end
     end
 
@@ -58,7 +58,7 @@ RSpec.describe Shale::Mapping::DictBase do
 
           expect do
             obj.map('foo', using: { to: :foo })
-          end.to raise_error(Shale::IncorrectMappingArgumentsError)
+          end.to raise_error(Fido::IncorrectMappingArgumentsError)
         end
       end
 
@@ -68,7 +68,7 @@ RSpec.describe Shale::Mapping::DictBase do
 
           expect do
             obj.map('foo', using: { from: :foo })
-          end.to raise_error(Shale::IncorrectMappingArgumentsError)
+          end.to raise_error(Fido::IncorrectMappingArgumentsError)
         end
       end
 

@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'shale/mapping/group/xml'
+require 'fido/mapping/group/xml'
 
-RSpec.describe Shale::Mapping::Group::Xml do
+RSpec.describe Fido::Mapping::Group::Xml do
   describe '#add' do
     context 'when kind is set to :content' do
       it 'adds a pair to a dict' do

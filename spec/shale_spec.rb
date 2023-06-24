@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-require 'shale'
+require 'fido'
 
-RSpec.describe Shale do
+RSpec.describe Fido do
   describe '.json_adapter' do
     context 'when adapter is not set' do
       it 'returns default adapter' do
         described_class.json_adapter = nil
-        expect(described_class.json_adapter).to eq(Shale::Adapter::JSON)
+        expect(described_class.json_adapter).to eq(Fido::Adapter::JSON)
       end
     end
 
@@ -55,7 +55,7 @@ RSpec.describe Shale do
     context 'when adapter is not set' do
       it 'returns default adapter' do
         described_class.csv_adapter = nil
-        expect(described_class.csv_adapter).to eq(Shale::Adapter::CSV)
+        expect(described_class.csv_adapter).to eq(Fido::Adapter::CSV)
       end
     end
 

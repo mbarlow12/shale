@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require 'shale/schema/compiler/value'
-require 'shale/schema/compiler/xml_property'
+require 'fido/schema/compiler/value'
+require 'fido/schema/compiler/xml_property'
 
-RSpec.describe Shale::Schema::Compiler::XMLProperty do
-  let(:type) { Shale::Schema::Compiler::Value.new }
+RSpec.describe Fido::Schema::Compiler::XMLProperty do
+  let(:type) { Fido::Schema::Compiler::Value.new }
 
   describe '#prefix' do
     it 'returns the value' do

@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'shale/adapter/toml_rb'
+require 'fido/adapter/toml_rb'
 
-RSpec.describe Shale::Adapter::TomlRB do
+RSpec.describe Fido::Adapter::TomlRB do
   describe '.load' do
     it 'parses TOML document' do
       doc = described_class.load('foo = "bar"')

@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 require 'ox'
-require 'shale/adapter/ox/node'
+require 'fido/adapter/ox/node'
 
-RSpec.describe Shale::Adapter::Ox::Node do
+RSpec.describe Fido::Adapter::Ox::Node do
   describe '#namespaces' do
     it 'returns empty hash' do
       el = Ox::Element.new('foo')

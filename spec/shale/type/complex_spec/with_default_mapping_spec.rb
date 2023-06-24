@@ -1,34 +1,34 @@
 # frozen_string_literal: true
 
-require 'shale'
-require 'shale/adapter/rexml'
+require 'fido'
+require 'fido/adapter/rexml'
 require 'tomlib'
 
 module ComplexSpec__DefaultMapping # rubocop:disable Naming/ClassAndModuleCamelCase
-  class Child < Shale::Mapper
-    attribute :one, Shale::Type::String
-    attribute :two, Shale::Type::String, collection: true
+  class Child < Fido::Mapper
+    attribute :one, Fido::Type::String
+    attribute :two, Fido::Type::String, collection: true
   end
 
-  class Parent < Shale::Mapper
-    attribute :one, Shale::Type::String
-    attribute :two, Shale::Type::String, collection: true
+  class Parent < Fido::Mapper
+    attribute :one, Fido::Type::String
+    attribute :two, Fido::Type::String, collection: true
     attribute :child, Child
   end
 
-  class ParentCsv < Shale::Mapper
-    attribute :one, Shale::Type::String
-    attribute :two, Shale::Type::String
+  class ParentCsv < Fido::Mapper
+    attribute :one, Fido::Type::String
+    attribute :two, Fido::Type::String
   end
 end
 
-RSpec.describe Shale::Type::Complex do
+RSpec.describe Fido::Type::Complex do
   before(:each) do
-    Shale.json_adapter = Shale::Adapter::JSON
-    Shale.yaml_adapter = YAML
-    Shale.toml_adapter = Tomlib
-    Shale.csv_adapter = Shale::Adapter::CSV
-    Shale.xml_adapter = Shale::Adapter::REXML
+    Fido.json_adapter = Fido::Adapter::JSON
+    Fido.yaml_adapter = YAML
+    Fido.toml_adapter = Tomlib
+    Fido.csv_adapter = Fido::Adapter::CSV
+    Fido.xml_adapter = Fido::Adapter::REXML
   end
 
   let(:mapper) { ComplexSpec__DefaultMapping::Parent }
@@ -332,11 +332,11 @@ RSpec.describe Shale::Type::Complex do
       describe '.from_toml' do
         context 'when adapter is not set' do
           it 'raises an error' do
-            Shale.toml_adapter = nil
+            Fido.toml_adapter = nil
 
             expect do
               mapper.from_toml(toml)
-            end.to raise_error(Shale::AdapterError, /TOML Adapter is not set/)
+            end.to raise_error(Fido::AdapterError, /TOML Adapter is not set/)
           end
         end
 
@@ -355,11 +355,11 @@ RSpec.describe Shale::Type::Complex do
       describe '.to_toml' do
         context 'when adapter is not set' do
           it 'raises an error' do
-            Shale.toml_adapter = nil
+            Fido.toml_adapter = nil
 
             expect do
               mapper.new.to_toml
-            end.to raise_error(Shale::AdapterError, /TOML Adapter is not set/)
+            end.to raise_error(Fido::AdapterError, /TOML Adapter is not set/)
           end
         end
 
@@ -584,11 +584,11 @@ RSpec.describe Shale::Type::Complex do
 
         context 'when adapter is not set' do
           it 'raises an error' do
-            Shale.xml_adapter = nil
+            Fido.xml_adapter = nil
 
             expect do
               mapper.from_xml(xml)
-            end.to raise_error(Shale::AdapterError, /XML Adapter is not set/)
+            end.to raise_error(Fido::AdapterError, /XML Adapter is not set/)
           end
         end
 
@@ -607,11 +607,11 @@ RSpec.describe Shale::Type::Complex do
       describe '.to_xml' do
         context 'when adapter is not set' do
           it 'raises an error' do
-            Shale.xml_adapter = nil
+            Fido.xml_adapter = nil
 
             expect do
               mapper.new.to_xml
-            end.to raise_error(Shale::AdapterError, /XML Adapter is not set/)
+            end.to raise_error(Fido::AdapterError, /XML Adapter is not set/)
           end
         end
 

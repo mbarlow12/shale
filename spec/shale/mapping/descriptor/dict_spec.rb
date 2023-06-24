@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'shale/mapping/descriptor/dict'
+require 'fido/mapping/descriptor/dict'
 
-RSpec.describe Shale::Mapping::Descriptor::Dict do
+RSpec.describe Fido::Mapping::Descriptor::Dict do
   describe '#name' do
     context 'when name is set' do
       it 'returns name' do

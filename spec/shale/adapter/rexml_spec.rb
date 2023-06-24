@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 require 'rexml'
-require 'shale/adapter/rexml'
+require 'fido/adapter/rexml'
 
-RSpec.describe Shale::Adapter::REXML do
+RSpec.describe Fido::Adapter::REXML do
   describe '.load' do
     context 'with valid XML document' do
       it 'parses XML document' do
@@ -16,7 +16,7 @@ RSpec.describe Shale::Adapter::REXML do
       it 'raises an error' do
         expect do
           described_class.load('<foo')
-        end.to raise_error(Shale::ParseError)
+        end.to raise_error(Fido::ParseError)
       end
     end
   end
@@ -117,14 +117,14 @@ RSpec.describe Shale::Adapter::REXML do
   end
 
   describe '.create_document' do
-    it 'returns instance of Shale::Adapter::REXML::Document' do
+    it 'returns instance of Fido::Adapter::REXML::Document' do
       doc = described_class.create_document
-      expect(doc.class).to eq(Shale::Adapter::REXML::Document)
+      expect(doc.class).to eq(Fido::Adapter::REXML::Document)
     end
 
     it 'accepts one parameter and returns instance' do
       doc = described_class.create_document('foobar')
-      expect(doc.class).to eq(Shale::Adapter::REXML::Document)
+      expect(doc.class).to eq(Fido::Adapter::REXML::Document)
     end
   end
 end

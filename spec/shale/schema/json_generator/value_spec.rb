@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'shale/schema/json_generator/value'
+require 'fido/schema/json_generator/value'
 
-RSpec.describe Shale::Schema::JSONGenerator::Value do
+RSpec.describe Fido::Schema::JSONGenerator::Value do
   describe '#as_type' do
     it 'returns JSON Schema fragment as Hash' do
       expected = {

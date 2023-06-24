@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 require 'ox'
-require 'shale/adapter/ox/document'
+require 'fido/adapter/ox/document'
 
-RSpec.describe Shale::Adapter::Ox::Document do
+RSpec.describe Fido::Adapter::Ox::Document do
   subject(:doc) { described_class.new }
 
   describe '#doc' do

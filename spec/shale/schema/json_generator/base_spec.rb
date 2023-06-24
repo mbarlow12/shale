@@ -1,31 +1,31 @@
 # frozen_string_literal: true
 
-require 'shale/schema/json_generator/base'
+require 'fido/schema/json_generator/base'
 
-module ShaleSchemaJSONGeneratorBaseTesting
-  class TypeNullable < Shale::Schema::JSONGenerator::Base
+module FidoSchemaJSONGeneratorBaseTesting
+  class TypeNullable < Fido::Schema::JSONGenerator::Base
     def as_type
       { 'type' => 'test-type' }
     end
   end
 
-  class TypeNotNullable < Shale::Schema::JSONGenerator::Base
+  class TypeNotNullable < Fido::Schema::JSONGenerator::Base
     def as_type
       { 'foo' => 'test-type' }
     end
   end
 
-  class TypeMultipleValues < Shale::Schema::JSONGenerator::Base
+  class TypeMultipleValues < Fido::Schema::JSONGenerator::Base
     def as_type
       { 'type' => %w[test-type1 test-type2 test-type3] }
     end
   end
 end
 
-RSpec.describe Shale::Schema::JSONGenerator::Base do
+RSpec.describe Fido::Schema::JSONGenerator::Base do
   describe '#name' do
     it 'returns name' do
-      expect(ShaleSchemaJSONGeneratorBaseTesting::TypeNullable.new('foo').name).to eq('foo')
+      expect(FidoSchemaJSONGeneratorBaseTesting::TypeNullable.new('foo').name).to eq('foo')
     end
   end
 
@@ -33,7 +33,7 @@ RSpec.describe Shale::Schema::JSONGenerator::Base do
     context 'when can by null' do
       context 'when is not nullable and has no default' do
         it 'returns JSON Schema fragment as Hash' do
-          type = ShaleSchemaJSONGeneratorBaseTesting::TypeNullable.new('foo')
+          type = FidoSchemaJSONGeneratorBaseTesting::TypeNullable.new('foo')
           type.nullable = false
 
           expect(type.as_json).to eq({ 'type' => 'test-type' })
@@ -42,7 +42,7 @@ RSpec.describe Shale::Schema::JSONGenerator::Base do
 
       context 'when is nullable and has no default' do
         it 'returns JSON Schema fragment as Hash' do
-          type = ShaleSchemaJSONGeneratorBaseTesting::TypeNullable.new('foo')
+          type = FidoSchemaJSONGeneratorBaseTesting::TypeNullable.new('foo')
           type.nullable = true
 
           expect(type.as_json).to eq({ 'type' => %w[test-type null] })
@@ -51,7 +51,7 @@ RSpec.describe Shale::Schema::JSONGenerator::Base do
 
       context 'when is not nullable and has default' do
         it 'returns JSON Schema fragment as Hash' do
-          type = ShaleSchemaJSONGeneratorBaseTesting::TypeNullable.new('foo', default: 'foo')
+          type = FidoSchemaJSONGeneratorBaseTesting::TypeNullable.new('foo', default: 'foo')
           type.nullable = false
 
           expect(type.as_json).to eq({ 'type' => 'test-type', 'default' => 'foo' })
@@ -60,7 +60,7 @@ RSpec.describe Shale::Schema::JSONGenerator::Base do
 
       context 'when is nullable and has default' do
         it 'returns JSON Schema fragment as Hash' do
-          type = ShaleSchemaJSONGeneratorBaseTesting::TypeNullable.new('foo', default: 'foo')
+          type = FidoSchemaJSONGeneratorBaseTesting::TypeNullable.new('foo', default: 'foo')
           type.nullable = true
 
           expect(type.as_json).to eq({ 'type' => %w[test-type null], 'default' => 'foo' })
@@ -69,7 +69,7 @@ RSpec.describe Shale::Schema::JSONGenerator::Base do
 
       context 'when has multiple values' do
         it 'returns JSON Schema fragment as Hash' do
-          type = ShaleSchemaJSONGeneratorBaseTesting::TypeMultipleValues.new('foo')
+          type = FidoSchemaJSONGeneratorBaseTesting::TypeMultipleValues.new('foo')
           type.nullable = true
 
           expect(type.as_json).to eq({ 'type' => %w[test-type1 test-type2 test-type3 null] })
@@ -80,7 +80,7 @@ RSpec.describe Shale::Schema::JSONGenerator::Base do
     context 'when can not by null' do
       context 'when is not nullable and has no default' do
         it 'returns JSON Schema fragment as Hash' do
-          type = ShaleSchemaJSONGeneratorBaseTesting::TypeNotNullable.new('foo')
+          type = FidoSchemaJSONGeneratorBaseTesting::TypeNotNullable.new('foo')
           type.nullable = false
 
           expect(type.as_json).to eq({ 'foo' => 'test-type' })
@@ -89,7 +89,7 @@ RSpec.describe Shale::Schema::JSONGenerator::Base do
 
       context 'when is nullable and has no default' do
         it 'returns JSON Schema fragment as Hash' do
-          type = ShaleSchemaJSONGeneratorBaseTesting::TypeNotNullable.new('foo')
+          type = FidoSchemaJSONGeneratorBaseTesting::TypeNotNullable.new('foo')
           type.nullable = true
 
           expect(type.as_json).to eq({ 'foo' => 'test-type' })
@@ -98,7 +98,7 @@ RSpec.describe Shale::Schema::JSONGenerator::Base do
 
       context 'when is not nullable and has default' do
         it 'returns JSON Schema fragment as Hash' do
-          type = ShaleSchemaJSONGeneratorBaseTesting::TypeNotNullable.new('foo', default: 'foo')
+          type = FidoSchemaJSONGeneratorBaseTesting::TypeNotNullable.new('foo', default: 'foo')
           type.nullable = false
 
           expect(type.as_json).to eq({ 'foo' => 'test-type', 'default' => 'foo' })
@@ -107,7 +107,7 @@ RSpec.describe Shale::Schema::JSONGenerator::Base do
 
       context 'when is nullable and has default' do
         it 'returns JSON Schema fragment as Hash' do
-          type = ShaleSchemaJSONGeneratorBaseTesting::TypeNotNullable.new('foo', default: 'foo')
+          type = FidoSchemaJSONGeneratorBaseTesting::TypeNotNullable.new('foo', default: 'foo')
           type.nullable = true
 
           expect(type.as_json).to eq({ 'foo' => 'test-type', 'default' => 'foo' })

@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-require 'shale/schema/compiler/boolean'
+require 'fido/schema/compiler/boolean'
 
-RSpec.describe Shale::Schema::Compiler::Boolean do
+RSpec.describe Fido::Schema::Compiler::Boolean do
   describe '#name' do
-    it 'returns Shale type name' do
-      expect(described_class.new.name).to eq('Shale::Type::Boolean')
+    it 'returns Fido type name' do
+      expect(described_class.new.name).to eq('Fido::Type::Boolean')
     end
   end
 end

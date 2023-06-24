@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require 'shale/adapter/rexml'
-require 'shale/type/date'
+require 'fido/adapter/rexml'
+require 'fido/type/date'
 
-RSpec.describe Shale::Type::Date do
+RSpec.describe Fido::Type::Date do
   describe '.cast' do
     context 'when value is nil' do
       it 'returns nil' do
@@ -121,7 +121,7 @@ RSpec.describe Shale::Type::Date do
   describe '.as_xml' do
     context 'when value is nil' do
       it 'converts text to XML node' do
-        doc = Shale::Adapter::REXML.create_document
+        doc = Fido::Adapter::REXML.create_document
         res = described_class.as_xml(nil, 'foobar', doc).to_s
         expect(res).to eq('<foobar/>')
       end
@@ -130,7 +130,7 @@ RSpec.describe Shale::Type::Date do
     context 'when value is present' do
       it 'converts text to XML node' do
         date = Date.new(2021, 1, 1)
-        doc = Shale::Adapter::REXML.create_document
+        doc = Fido::Adapter::REXML.create_document
         res = described_class.as_xml(date, 'foobar', doc).to_s
         expect(res).to eq('<foobar>2021-01-01</foobar>')
       end

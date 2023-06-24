@@ -1,10 +1,10 @@
-# Shale
+# Fido
 
-Shale is a Ruby object mapper and serializer for JSON, YAML, TOML, CSV and XML.
+Fido is a Ruby object mapper and serializer for JSON, YAML, TOML, CSV and XML.
 It allows you to parse JSON, YAML, TOML, CSV and XML data and convert it into Ruby data structures,
 as well as serialize data structures into JSON, YAML, TOML, CSV or XML.
 
-Documentation with interactive examples is available at [Shale website](https://www.shalerb.org)
+Documentation with interactive examples is available at [Fido website](https://www.fidorb.org)
 
 ## Features
 
@@ -17,12 +17,12 @@ Documentation with interactive examples is available at [Shale website](https://
 
 ## Installation
 
-Shale supports Ruby (MRI) 2.6+
+Fido supports Ruby (MRI) 2.6+
 
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'shale'
+gem 'fido'
 ```
 
 And then execute:
@@ -34,7 +34,7 @@ $ bundle install
 Or install it yourself as:
 
 ```
-$ gem install shale
+$ gem install fido
 ```
 
 ## Contents
@@ -70,29 +70,29 @@ $ gem install shale
 * [Writing your own type](#writing-your-own-type)
 * [Adapters](#adapters)
 * [Generating JSON Schema](#generating-json-schema)
-* [Compiling JSON Schema into Shale model](#compiling-json-schema-into-shale-model)
+* [Compiling JSON Schema into Fido model](#compiling-json-schema-into-fido-model)
 * [Generating XML Schema](#generating-xml-schema)
-* [Compiling XML Schema into Shale model](#compiling-xml-schema-into-shale-model)
+* [Compiling XML Schema into Fido model](#compiling-xml-schema-into-fido-model)
 
 ## Usage
 
 ### Simple use case
 
 ```ruby
-require 'shale'
+require 'fido'
 
-class Address < Shale::Mapper
-  attribute :city, Shale::Type::String
-  attribute :street, Shale::Type::String
-  attribute :zip, Shale::Type::String
+class Address < Fido::Mapper
+  attribute :city, Fido::Type::String
+  attribute :street, Fido::Type::String
+  attribute :zip, Fido::Type::String
 end
 
-class Person < Shale::Mapper
-  attribute :first_name, Shale::Type::String
-  attribute :last_name, Shale::Type::String
-  attribute :age, Shale::Type::Integer
-  attribute :married, Shale::Type::Boolean, default: -> { false }
-  attribute :hobbies, Shale::Type::String, collection: true
+class Person < Fido::Mapper
+  attribute :first_name, Fido::Type::String
+  attribute :last_name, Fido::Type::String
+  attribute :age, Fido::Type::Integer
+  attribute :married, Fido::Type::Boolean, default: -> { false }
+  attribute :hobbies, Fido::Type::String, collection: true
   attribute :address, Address
 end
 ```
@@ -207,8 +207,8 @@ person.to_yaml
 
 ### Converting TOML to object
 
-To use TOML with Shale you have to set adapter you want to use.
-Out of the box Shale suports [Tomlib](https://github.com/kgiszczak/tomlib).
+To use TOML with Fido you have to set adapter you want to use.
+Out of the box Fido suports [Tomlib](https://github.com/kgiszczak/tomlib).
 It also comes with adapter for [toml-rb](https://github.com/emancu/toml-rb) if you prefer that.
 For details see [Adapters](#adapters) section.
 
@@ -222,14 +222,14 @@ then setup adapter:
 
 ```ruby
 require 'tomlib'
-Shale.toml_adapter = Tomlib
+Fido.toml_adapter = Tomlib
 
 # Alternatively if you'd like to use toml-rb, use:
-require 'shale/adapter/toml_rb'
-Shale.toml_adapter = Shale::Adapter::TomlRB
+require 'fido/adapter/toml_rb'
+Fido.toml_adapter = Fido::Adapter::TomlRB
 ```
 
-Now you can use TOML with Shale:
+Now you can use TOML with Fido:
 
 ```ruby
 person = Person.from_toml(<<~DATA)
@@ -300,16 +300,16 @@ person.to_hash
 
 ### Converting XML to object
 
-To use XML with Shale you have to set adapter you want to use.
-Shale comes with adapters for REXML, Nokogiri and OX parsers.
+To use XML with Fido you have to set adapter you want to use.
+Fido comes with adapters for REXML, Nokogiri and OX parsers.
 For details see [Adapters](#adapters) section.
 
 ```ruby
-require 'shale/adapter/rexml'
-Shale.xml_adapter = Shale::Adapter::REXML
+require 'fido/adapter/rexml'
+Fido.xml_adapter = Fido::Adapter::REXML
 ```
 
-Now you can use XML with Shale:
+Now you can use XML with Fido:
 
 ```ruby
 person = Person.from_xml(<<~DATA)
@@ -378,7 +378,7 @@ people[0].to_csv # or Person.to_csv(people) if you want to convert a collection
 
 ### Converting collections
 
-Shale allows converting collections for formats that support it (JSON, YAML and CSV).
+Fido allows converting collections for formats that support it (JSON, YAML and CSV).
 To convert Ruby array to JSON:
 
 ```ruby
@@ -422,9 +422,9 @@ By default keys are named the same as attributes. To use custom keys use:
 :warning: **Declaring custom mapping removes default mapping for given format!**
 
 ```ruby
-class Person < Shale::Mapper
-  attribute :first_name, Shale::Type::String
-  attribute :last_name, Shale::Type::String
+class Person < Fido::Mapper
+  attribute :first_name, Fido::Type::String
+  attribute :last_name, Fido::Type::String
 
   json do
     map 'firstName', to: :first_name
@@ -436,9 +436,9 @@ end
 ### Mapping YAML keys to object attributes
 
 ```ruby
-class Person < Shale::Mapper
-  attribute :first_name, Shale::Type::String
-  attribute :last_name, Shale::Type::String
+class Person < Fido::Mapper
+  attribute :first_name, Fido::Type::String
+  attribute :last_name, Fido::Type::String
 
   yaml do
     map 'firstName', to: :first_name
@@ -450,9 +450,9 @@ end
 ### Mapping TOML keys to object attributes
 
 ```ruby
-class Person < Shale::Mapper
-  attribute :first_name, Shale::Type::String
-  attribute :last_name, Shale::Type::String
+class Person < Fido::Mapper
+  attribute :first_name, Fido::Type::String
+  attribute :last_name, Fido::Type::String
 
   toml do
     map 'firstName', to: :first_name
@@ -468,9 +468,9 @@ used as a label in header row. So, in the example below the first column will be
 to `:first_name` attribute and the second column to `:last_name`.
 
 ```ruby
-class Person < Shale::Mapper
-  attribute :first_name, Shale::Type::String
-  attribute :last_name, Shale::Type::String
+class Person < Fido::Mapper
+  attribute :first_name, Fido::Type::String
+  attribute :last_name, Fido::Type::String
 
   csv do
     map 'firstName', to: :first_name
@@ -482,9 +482,9 @@ end
 ### Mapping Hash keys to object attributes
 
 ```ruby
-class Person < Shale::Mapper
-  attribute :first_name, Shale::Type::String
-  attribute :last_name, Shale::Type::String
+class Person < Fido::Mapper
+  attribute :first_name, Fido::Type::String
+  attribute :last_name, Fido::Type::String
 
   hsh do
     map 'firstName', to: :first_name
@@ -498,10 +498,10 @@ end
 XML is more complicated format than JSON or YAML. To map elements, attributes and content use:
 
 ```ruby
-class Address < Shale::Mapper
-  attribute :street, Shale::Type::String
-  attribute :city, Shale::Type::String
-  attribute :zip, Shale::Type::String
+class Address < Fido::Mapper
+  attribute :street, Fido::Type::String
+  attribute :city, Fido::Type::String
+  attribute :zip, Fido::Type::String
 
   xml do
     map_content to: :street
@@ -510,11 +510,11 @@ class Address < Shale::Mapper
   end
 end
 
-class Person < Shale::Mapper
-  attribute :first_name, Shale::Type::String
-  attribute :last_name, Shale::Type::String
-  attribute :age, Shale::Type::Integer
-  attribute :hobbies, Shale::Type::String, collection: true
+class Person < Fido::Mapper
+  attribute :first_name, Fido::Type::String
+  attribute :last_name, Fido::Type::String
+  attribute :age, Fido::Type::Integer
+  attribute :hobbies, Fido::Type::String, collection: true
   attribute :address, Address
 
   xml do
@@ -552,16 +552,16 @@ DATA
 You can use `cdata: true` option on `map_element` and `map_content` to handle CDATA nodes:
 
 ```ruby
-class Address < Shale::Mapper
-  attribute :content, Shale::Type::String
+class Address < Fido::Mapper
+  attribute :content, Fido::Type::String
 
   xml do
     map_content to: :content, cdata: true
   end
 end
 
-class Person < Shale::Mapper
-  attribute :first_name, Shale::Type::String
+class Person < Fido::Mapper
+  attribute :first_name, Fido::Type::String
   attribute :address, Address
 
   xml do
@@ -586,10 +586,10 @@ To map namespaced elements and attributes use `namespace` and `prefix` propertie
 `map_element` and `map_attribute`
 
 ```ruby
-class Person < Shale::Mapper
-  attribute :first_name, Shale::Type::String
-  attribute :last_name, Shale::Type::String
-  attribute :age, Shale::Type::Integer
+class Person < Fido::Mapper
+  attribute :first_name, Fido::Type::String
+  attribute :last_name, Fido::Type::String
+  attribute :age, Fido::Type::Integer
 
   xml do
     root 'person'
@@ -613,12 +613,12 @@ To define default namespace for all elements use `namespace` declaration
 explicitly declare it on `map_attribute`).
 
 ```ruby
-class Person < Shale::Mapper
-  attribute :first_name, Shale::Type::String
-  attribute :middle_name, Shale::Type::String
-  attribute :last_name, Shale::Type::String
-  attribute :age, Shale::Type::Integer
-  attribute :hobby, Shale::Type::String
+class Person < Fido::Mapper
+  attribute :first_name, Fido::Type::String
+  attribute :middle_name, Fido::Type::String
+  attribute :last_name, Fido::Type::String
+  attribute :age, Fido::Type::Integer
+  attribute :hobby, Fido::Type::String
 
   xml do
     root 'person'
@@ -653,10 +653,10 @@ You can change this behavior by using `render_nil: true` on a mapping.
 For CSV the default is to render `nil` elements.
 
 ```ruby
-class Person < Shale::Mapper
-  attribute :first_name, Shale::Type::String
-  attribute :last_name, Shale::Type::String
-  attribute :age, Shale::Type::Integer
+class Person < Fido::Mapper
+  attribute :first_name, Fido::Type::String
+  attribute :last_name, Fido::Type::String
+  attribute :age, Fido::Type::Integer
 
   json do
     map 'first_name', to: :first_name, render_nil: true
@@ -696,7 +696,7 @@ puts person.to_xml(pretty: true)
 If you want to change how nil values are rendered for all mappings you can use `render_nil` method:
 
 ```ruby
-class Base < Shale::Mapper
+class Base < Fido::Mapper
   json do
     # change render_nil default for all JSON mappings inheriting from Base class
     render_nil true
@@ -704,9 +704,9 @@ class Base < Shale::Mapper
 end
 
 class Person < Base
-  attribute :first_name, Shale::Type::String
-  attribute :last_name, Shale::Type::String
-  attribute :age, Shale::Type::Integer
+  attribute :first_name, Fido::Type::String
+  attribute :last_name, Fido::Type::String
+  attribute :age, Fido::Type::Integer
 
   json do
     # override default from Base class
@@ -723,8 +723,8 @@ end
 
 ```ruby
 class Person < Base
-  attribute :first_name, Shale::Type::String
-  attribute :last_name, Shale::Type::String
+  attribute :first_name, Fido::Type::String
+  attribute :last_name, Fido::Type::String
 
   json do
     render_nil false
@@ -742,10 +742,10 @@ If you need full controll over extracting and generating data from/to document,
 you can use methods to do so:
 
 ```ruby
-class Person < Shale::Mapper
-  attribute :hobbies, Shale::Type::String, collection: true
-  attribute :street, Shale::Type::String
-  attribute :city, Shale::Type::String
+class Person < Fido::Mapper
+  attribute :hobbies, Fido::Type::String, collection: true
+  attribute :street, Fido::Type::String
+  attribute :city, Fido::Type::String
 
   json do
     map 'hobbies', using: { from: :hobbies_from_json, to: :hobbies_to_json }
@@ -833,8 +833,8 @@ DATA
 You can also pass a `context` object that will be available in extractor/generator methods:
 
 ```ruby
-class Person < Shale::Mapper
-  attribute :password, Shale::Type::String
+class Person < Fido::Mapper
+  attribute :password, Fido::Type::String
 
   json do
     map 'password', using: { from: :password_from_json, to: :password_to_json }
@@ -863,8 +863,8 @@ Person.new(password: 'secret').to_json(context: current_user)
 If you want to work on multiple elements at a time you can group them using `group` block:
 
 ```ruby
-class Person < Shale::Mapper
-  attribute :name, Shale::Type::String
+class Person < Fido::Mapper
+  attribute :name, Fido::Type::String
 
   json do
     group from: :name_from_json, to: :name_to_json do
@@ -914,13 +914,13 @@ DATA
 To delegate fields to child complex types you can use `receiver: :child` declaration:
 
 ```ruby
-class Address < Shale::Mapper
-  attribute :city, Shale::Type::String
-  attribute :street, Shale::Type::String
+class Address < Fido::Mapper
+  attribute :city, Fido::Type::String
+  attribute :street, Fido::Type::String
 end
 
-class Person < Shale::Mapper
-  attribute :name, Shale::Type::String
+class Person < Fido::Mapper
+  attribute :name, Fido::Type::String
   attribute :address, Address
 
   json do
@@ -1040,8 +1040,8 @@ names and shouldn't be included in the returned collection. It also accepts all 
 
 ```ruby
 class Person
-  attribute :first_name, Shale::Type::String
-  attribute :last_name, Shale::Type::String
+  attribute :first_name, Fido::Type::String
+  attribute :last_name, Fido::Type::String
 end
 
 people = Person.from_csv(<<~DATA, headers: true, col_sep: '|')
@@ -1068,7 +1068,7 @@ Person.to_csv(people, headers: true, col_sep: '|')
 
 ### Using custom models
 
-By default Shale combines mapper and model into one class. If you want to use your own classes
+By default Fido combines mapper and model into one class. If you want to use your own classes
 as models you can do it by using `model` directive on the mapper:
 
 ```ruby
@@ -1080,18 +1080,18 @@ class Person
   attr_accessor :first_name, :last_name, :address
 end
 
-class AddressMapper < Shale::Mapper
+class AddressMapper < Fido::Mapper
   model Address
 
-  attribute :street, Shale::Type::String
-  attribute :city, Shale::Type::String
+  attribute :street, Fido::Type::String
+  attribute :city, Fido::Type::String
 end
 
-class PersonMapper < Shale::Mapper
+class PersonMapper < Fido::Mapper
   model Person
 
-  attribute :first_name, Shale::Type::String
-  attribute :last_name, Shale::Type::String
+  attribute :first_name, Fido::Type::String
+  attribute :last_name, Fido::Type::String
   attribute :address, AddressMapper
 end
 
@@ -1129,23 +1129,23 @@ PersonMapper.to_json(person, pretty: true)
 
 ### Supported types
 
-Shale supports these types out of the box:
+Fido supports these types out of the box:
 
-- `Shale::Type::Boolean`
-- `Shale::Type::Date`
-- `Shale::Type::Float`
-- `Shale::Type::Integer`
-- `Shale::Type::String`
-- `Shale::Type::Time`
+- `Fido::Type::Boolean`
+- `Fido::Type::Date`
+- `Fido::Type::Float`
+- `Fido::Type::Integer`
+- `Fido::Type::String`
+- `Fido::Type::Time`
 
 ### Writing your own type
 
-To add your own type extend it from `Shale::Type::Value` and implement `.cast` class method.
+To add your own type extend it from `Fido::Type::Value` and implement `.cast` class method.
 
 ```ruby
-require 'shale/type/value'
+require 'fido/type/value'
 
-class MyIntegerType < Shale::Type::Value
+class MyIntegerType < Fido::Type::Value
   def self.cast(value)
     value.to_i
   end
@@ -1154,69 +1154,69 @@ end
 
 ### Adapters
 
-Shale uses adapters for parsing and generating documents.
+Fido uses adapters for parsing and generating documents.
 By default Ruby's standard JSON, YAML, CSV parsers are used for handling JSON YAML, CSV documents.
 
 You can change it by providing your own adapter. For JSON, YAML, TOML and CSV adapter must
 implement `.load` and `.dump` class methods.
 
 ```ruby
-require 'shale'
+require 'fido'
 require 'multi_json'
 
-Shale.json_adapter = MultiJson
-Shale.yaml_adapter = MyYamlAdapter
+Fido.json_adapter = MultiJson
+Fido.yaml_adapter = MyYamlAdapter
 ```
 
 To handle TOML documents you have to set TOML adapter. Out of the box `Tomlib` is supported.
-Shale also provides adapter for `toml-rb` parser:
+Fido also provides adapter for `toml-rb` parser:
 
 ```ruby
-require 'shale'
+require 'fido'
 
 # if you want to use Tomlib
 require 'tomlib'
-Shale.toml_adapter = Tomlib
+Fido.toml_adapter = Tomlib
 
 # if you want to use toml-rb
-require 'shale/adapter/toml_rb'
-Shale.toml_adapter = Shale::Adapter::TomlRB
+require 'fido/adapter/toml_rb'
+Fido.toml_adapter = Fido::Adapter::TomlRB
 ```
 
 To handle XML documents you have to explicitly set XML adapter.
-Shale provides adapters for most popular Ruby XML parsers:
+Fido provides adapters for most popular Ruby XML parsers:
 
 :warning: **Ox doesn't support XML namespaces**
 
 ```ruby
-require 'shale'
+require 'fido'
 
 # if you want to use REXML:
 
-require 'shale/adapter/rexml'
-Shale.xml_adapter = Shale::Adapter::REXML
+require 'fido/adapter/rexml'
+Fido.xml_adapter = Fido::Adapter::REXML
 
 # if you want to use Nokogiri:
 
-require 'shale/adapter/nokogiri'
-Shale.xml_adapter = Shale::Adapter::Nokogiri
+require 'fido/adapter/nokogiri'
+Fido.xml_adapter = Fido::Adapter::Nokogiri
 
 # or if you want to use Ox:
 
-require 'shale/adapter/ox'
-Shale.xml_adapter = Shale::Adapter::Ox
+require 'fido/adapter/ox'
+Fido.xml_adapter = Fido::Adapter::Ox
 ```
 
 ### Generating JSON Schema
 
 :warning: Only **[Draft 2020-12](https://json-schema.org/draft/2020-12/schema)** JSON Schema is supported
 
-To generate JSON Schema from your Shale data model use:
+To generate JSON Schema from your Fido data model use:
 
 ```ruby
-require 'shale/schema'
+require 'fido/schema'
 
-Shale::Schema.to_json(
+Fido::Schema.to_json(
   Person,
   id: 'http://foo.bar/schema/person',
   description: 'My description',
@@ -1266,38 +1266,38 @@ Shale::Schema.to_json(
 You can also use a command line tool to do it:
 
 ```
-$ shaleb -i data_model.rb -r Person -p
+$ fidob -i data_model.rb -r Person -p
 ```
 
 If you want to convert your own types to JSON Schema types use:
 
 ```ruby
-require 'shale'
-require 'shale/schema'
+require 'fido'
+require 'fido/schema'
 
-class MyEmailType < Shale::Type::Value
+class MyEmailType < Fido::Type::Value
   ...
 end
 
-class MyEmailJSONType < Shale::Schema::JSONGenerator::Base
+class MyEmailJSONType < Fido::Schema::JSONGenerator::Base
   def as_type
     { 'type' => 'string', 'format' => 'email' }
   end
 end
 
-Shale::Schema::JSONGenerator.register_json_type(MyEmailType, MyEmailJSONType)
+Fido::Schema::JSONGenerator.register_json_type(MyEmailType, MyEmailJSONType)
 ```
 
-### Compiling JSON Schema into Shale model
+### Compiling JSON Schema into Fido model
 
 :warning: Only **[Draft 2020-12](https://json-schema.org/draft/2020-12/schema)** JSON Schema is supported
 
-To generate Shale data model from JSON Schema use `Shale::Schema.from_json`.
+To generate Fido data model from JSON Schema use `Fido::Schema.from_json`.
 You can pass `root_name: 'Foobar'` to change the name of the root type and
 `namespace_mapping: {}` to map schemas to Ruby modules:
 
 ```ruby
-require 'shale/schema'
+require 'fido/schema'
 
 schema = <<~SCHEMA
 {
@@ -1320,7 +1320,7 @@ schema = <<~SCHEMA
 }
 SCHEMA
 
-Shale::Schema.from_json(
+Fido::Schema.from_json(
   [schema],
   root_name: 'Person',
   namespace_mapping: {
@@ -1333,13 +1333,13 @@ Shale::Schema.from_json(
 #
 # {
 #   "api/bar/address" => "
-#     require 'shale'
+#     require 'fido'
 #
 #     module Api
 #       module Bar
-#         class Address < Shale::Mapper
-#           attribute :street, Shale::Type::String
-#           attribute :city, Shale::Type::String
+#         class Address < Fido::Mapper
+#           attribute :street, Fido::Type::String
+#           attribute :city, Fido::Type::String
 #
 #           json do
 #             map 'street', to: :street
@@ -1350,15 +1350,15 @@ Shale::Schema.from_json(
 #     end
 #   ",
 #   "api/foo/person" => "
-#     require 'shale'
+#     require 'fido'
 #
 #     require_relative '../bar/address'
 #
 #     module Api
 #       module Foo
-#         class Person < Shale::Mapper
-#           attribute :first_name, Shale::Type::String
-#           attribute :last_name, Shale::Type::String
+#         class Person < Fido::Mapper
+#           attribute :first_name, Fido::Type::String
+#           attribute :last_name, Fido::Type::String
 #           attribute :address, Api::Bar::Address
 #
 #           json do
@@ -1376,17 +1376,17 @@ Shale::Schema.from_json(
 You can also use a command line tool to do it:
 
 ```
-$ shaleb -c -i schema.json -r Person -m http://bar.com=Api::Bar,=Api::Foo
+$ fidob -c -i schema.json -r Person -m http://bar.com=Api::Bar,=Api::Foo
 ```
 
 ### Generating XML Schema
 
-To generate XML Schema from your Shale data model use:
+To generate XML Schema from your Fido data model use:
 
 ```ruby
-require 'shale/schema'
+require 'fido/schema'
 
-Shale::Schema.to_xml(Person, pretty: true)
+Fido::Schema.to_xml(Person, pretty: true)
 
 # =>
 #
@@ -1429,29 +1429,29 @@ Shale::Schema.to_xml(Person, pretty: true)
 You can also use a command line tool to do it:
 
 ```
-$ shaleb -i data_model.rb -r Person -p -f xml
+$ fidob -i data_model.rb -r Person -p -f xml
 ```
 
 If you want to convert your own types to XML Schema types use:
 
 ```ruby
-require 'shale'
-require 'shale/schema'
+require 'fido'
+require 'fido/schema'
 
-class MyEmailType < Shale::Type::Value
+class MyEmailType < Fido::Type::Value
   ...
 end
 
-Shale::Schema::XMLGenerator.register_xml_type(MyEmailType, 'myEmailXMLType')
+Fido::Schema::XMLGenerator.register_xml_type(MyEmailType, 'myEmailXMLType')
 ```
 
-### Compiling XML Schema into Shale model
+### Compiling XML Schema into Fido model
 
-To generate Shale data model from XML Schema use `Shale::Schema.from_xml`.
+To generate Fido data model from XML Schema use `Fido::Schema.from_xml`.
 You can pass `namespace_mapping: {}` to map XML namespaces to Ruby modules:
 
 ```ruby
-require 'shale/schema'
+require 'fido/schema'
 
 schema1 = <<~SCHEMA
 <xs:schema
@@ -1490,7 +1490,7 @@ schema2 = <<~SCHEMA
 </xs:schema>
 SCHEMA
 
-Shale::Schema.from_xml(
+Fido::Schema.from_xml(
   [schema1, schema2],
   namespace_mapping: {
     nil => 'Api::Foo', # no namespace
@@ -1502,13 +1502,13 @@ Shale::Schema.from_xml(
 #
 # {
 #   "api/bar/address" => "
-#     require 'shale'
+#     require 'fido'
 #
 #     module Api
 #       module Bar
-#         class Address < Shale::Mapper
-#           attribute :street, Shale::Type::String
-#           attribute :city, Shale::Type::String
+#         class Address < Fido::Mapper
+#           attribute :street, Fido::Type::String
+#           attribute :city, Fido::Type::String
 #
 #           xml do
 #             root 'Address'
@@ -1522,14 +1522,14 @@ Shale::Schema.from_xml(
 #     end
 #   ",
 #   "api/foo/person" => "
-#     require 'shale'
+#     require 'fido'
 #
 #     require_relative '../bar/address'
 #
 #     module Api
 #       module Foo
-#         class Person < Shale::Mapper
-#           attribute :name, Shale::Type::String
+#         class Person < Fido::Mapper
+#           attribute :name, Fido::Type::String
 #           attribute :address, Api::Bar::Address
 #
 #           xml do
@@ -1548,12 +1548,12 @@ Shale::Schema.from_xml(
 You can also use a command line tool to do it:
 
 ```
-$ shaleb -c -f xml -i schema.xml -m http://bar.com=Api::Bar,=Api::Foo
+$ fidob -c -f xml -i schema.xml -m http://bar.com=Api::Bar,=Api::Foo
 ```
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/kgiszczak/shale.
+Bug reports and pull requests are welcome on GitHub at https://github.com/kgiszczak/fido.
 
 ## License
 

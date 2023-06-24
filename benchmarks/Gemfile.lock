@@ -1,7 +1,7 @@
 PATH
   remote: ..
   specs:
-    shale (0.9.0)
+    fido (0.9.0)
 
 GEM
   remote: https://rubygems.org/
@@ -32,7 +32,7 @@ DEPENDENCIES
   ox
   representable
   rexml
-  shale!
+  fido!
 
 BUNDLED WITH
    2.4.3

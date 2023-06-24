@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-require 'shale'
-require 'shale/adapter/rexml'
+require 'fido'
+require 'fido/adapter/rexml'
 require 'tomlib'
 
 module ComplexSpec__RenderNilDefault # rubocop:disable Naming/ClassAndModuleCamelCase
-  class DictBase < Shale::Mapper
-    attribute :base, Shale::Type::String
+  class DictBase < Fido::Mapper
+    attribute :base, Fido::Type::String
 
     hsh do
       render_nil true
@@ -35,8 +35,8 @@ module ComplexSpec__RenderNilDefault # rubocop:disable Naming/ClassAndModuleCame
   end
 
   class DictDefault < DictBase
-    attribute :foo, Shale::Type::String
-    attribute :bar, Shale::Type::String
+    attribute :foo, Fido::Type::String
+    attribute :bar, Fido::Type::String
 
     hsh do
       map 'foo', to: :foo
@@ -65,8 +65,8 @@ module ComplexSpec__RenderNilDefault # rubocop:disable Naming/ClassAndModuleCame
   end
 
   class DictDefaultOverride < DictBase
-    attribute :foo, Shale::Type::String
-    attribute :bar, Shale::Type::String
+    attribute :foo, Fido::Type::String
+    attribute :bar, Fido::Type::String
 
     hsh do
       render_nil false
@@ -100,8 +100,8 @@ module ComplexSpec__RenderNilDefault # rubocop:disable Naming/ClassAndModuleCame
   end
 
   class DictLocalOverride < DictBase
-    attribute :foo, Shale::Type::String
-    attribute :bar, Shale::Type::String
+    attribute :foo, Fido::Type::String
+    attribute :bar, Fido::Type::String
 
     hsh do
       map 'foo', to: :foo
@@ -129,9 +129,9 @@ module ComplexSpec__RenderNilDefault # rubocop:disable Naming/ClassAndModuleCame
     end
   end
 
-  class XmlBase < Shale::Mapper
-    attribute :base_element, Shale::Type::String
-    attribute :base_attribute, Shale::Type::String
+  class XmlBase < Fido::Mapper
+    attribute :base_element, Fido::Type::String
+    attribute :base_attribute, Fido::Type::String
 
     xml do
       render_nil true
@@ -142,10 +142,10 @@ module ComplexSpec__RenderNilDefault # rubocop:disable Naming/ClassAndModuleCame
   end
 
   class XmlDefault < XmlBase
-    attribute :foo_element, Shale::Type::String
-    attribute :bar_element, Shale::Type::String
-    attribute :foo_attribute, Shale::Type::String
-    attribute :bar_attribute, Shale::Type::String
+    attribute :foo_element, Fido::Type::String
+    attribute :bar_element, Fido::Type::String
+    attribute :foo_attribute, Fido::Type::String
+    attribute :bar_attribute, Fido::Type::String
 
     xml do
       root 'xml_default'
@@ -158,10 +158,10 @@ module ComplexSpec__RenderNilDefault # rubocop:disable Naming/ClassAndModuleCame
   end
 
   class XmlDefaultOverride < XmlBase
-    attribute :foo_element, Shale::Type::String
-    attribute :bar_element, Shale::Type::String
-    attribute :foo_attribute, Shale::Type::String
-    attribute :bar_attribute, Shale::Type::String
+    attribute :foo_element, Fido::Type::String
+    attribute :bar_element, Fido::Type::String
+    attribute :foo_attribute, Fido::Type::String
+    attribute :bar_attribute, Fido::Type::String
 
     xml do
       root 'xml_default_override'
@@ -176,10 +176,10 @@ module ComplexSpec__RenderNilDefault # rubocop:disable Naming/ClassAndModuleCame
   end
 
   class XmlLocalOverride < XmlBase
-    attribute :foo_element, Shale::Type::String
-    attribute :bar_element, Shale::Type::String
-    attribute :foo_attribute, Shale::Type::String
-    attribute :bar_attribute, Shale::Type::String
+    attribute :foo_element, Fido::Type::String
+    attribute :bar_element, Fido::Type::String
+    attribute :foo_attribute, Fido::Type::String
+    attribute :bar_attribute, Fido::Type::String
 
     xml do
       root 'xml_local_override'
@@ -192,13 +192,13 @@ module ComplexSpec__RenderNilDefault # rubocop:disable Naming/ClassAndModuleCame
   end
 end
 
-RSpec.describe Shale::Type::Complex do
+RSpec.describe Fido::Type::Complex do
   before(:each) do
-    Shale.json_adapter = Shale::Adapter::JSON
-    Shale.yaml_adapter = YAML
-    Shale.toml_adapter = Tomlib
-    Shale.csv_adapter = Shale::Adapter::CSV
-    Shale.xml_adapter = Shale::Adapter::REXML
+    Fido.json_adapter = Fido::Adapter::JSON
+    Fido.yaml_adapter = YAML
+    Fido.toml_adapter = Tomlib
+    Fido.csv_adapter = Fido::Adapter::CSV
+    Fido.xml_adapter = Fido::Adapter::REXML
   end
 
   context 'with render_nil default' do

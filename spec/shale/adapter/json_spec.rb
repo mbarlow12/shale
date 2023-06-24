@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'shale/adapter/json'
+require 'fido/adapter/json'
 
-RSpec.describe Shale::Adapter::JSON do
+RSpec.describe Fido::Adapter::JSON do
   describe '.load' do
     it 'parses JSON document' do
       doc = described_class.load('{"foo": "bar"}')

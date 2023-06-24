@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'shale/type/integer'
+require 'fido/type/integer'
 
-RSpec.describe Shale::Type::Integer do
+RSpec.describe Fido::Type::Integer do
   describe '.cast' do
     context 'when value is nil' do
       it 'returns nil' do

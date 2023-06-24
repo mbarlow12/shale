@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'shale/attribute'
+require 'fido/attribute'
 
-RSpec.describe Shale::Attribute do
+RSpec.describe Fido::Attribute do
   describe '#name' do
     it 'returns attribute value' do
       expect(described_class.new('foo', 'bar', false, nil).name).to eq('foo')

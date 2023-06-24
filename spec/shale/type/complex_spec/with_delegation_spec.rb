@@ -1,17 +1,17 @@
 # frozen_string_literal: true
 
-require 'shale'
-require 'shale/adapter/rexml'
+require 'fido'
+require 'fido/adapter/rexml'
 require 'tomlib'
 
 module ComplexSpec__Delegation # rubocop:disable Naming/ClassAndModuleCamelCase
-  class Child < Shale::Mapper
-    attribute :two, Shale::Type::String
-    attribute :three, Shale::Type::String
+  class Child < Fido::Mapper
+    attribute :two, Fido::Type::String
+    attribute :three, Fido::Type::String
   end
 
-  class ParentNoChild < Shale::Mapper
-    attribute :one, Shale::Type::String
+  class ParentNoChild < Fido::Mapper
+    attribute :one, Fido::Type::String
     attribute :child, Child
 
     hsh do
@@ -45,12 +45,12 @@ module ComplexSpec__Delegation # rubocop:disable Naming/ClassAndModuleCamelCase
     end
   end
 
-  class ChildXml < Shale::Mapper
-    attribute :content, Shale::Type::String
-    attribute :attr, Shale::Type::String
-    attribute :attr_collection, Shale::Type::String, collection: true
-    attribute :el, Shale::Type::String
-    attribute :el_collection, Shale::Type::String, collection: true
+  class ChildXml < Fido::Mapper
+    attribute :content, Fido::Type::String
+    attribute :attr, Fido::Type::String
+    attribute :attr_collection, Fido::Type::String, collection: true
+    attribute :el, Fido::Type::String
+    attribute :el_collection, Fido::Type::String, collection: true
 
     xml do
       root 'child_xml'
@@ -60,8 +60,8 @@ module ComplexSpec__Delegation # rubocop:disable Naming/ClassAndModuleCamelCase
     end
   end
 
-  class ParentNoChildXml < Shale::Mapper
-    attribute :one, Shale::Type::String
+  class ParentNoChildXml < Fido::Mapper
+    attribute :one, Fido::Type::String
     attribute :child, ChildXml
 
     xml do
@@ -76,8 +76,8 @@ module ComplexSpec__Delegation # rubocop:disable Naming/ClassAndModuleCamelCase
     end
   end
 
-  class ParentChild < Shale::Mapper
-    attribute :one, Shale::Type::String
+  class ParentChild < Fido::Mapper
+    attribute :one, Fido::Type::String
     attribute :child, Child
 
     hsh do
@@ -109,8 +109,8 @@ module ComplexSpec__Delegation # rubocop:disable Naming/ClassAndModuleCamelCase
     end
   end
 
-  class ParentChildXml < Shale::Mapper
-    attribute :one, Shale::Type::String
+  class ParentChildXml < Fido::Mapper
+    attribute :one, Fido::Type::String
     attribute :child, ChildXml
 
     xml do
@@ -123,12 +123,12 @@ module ComplexSpec__Delegation # rubocop:disable Naming/ClassAndModuleCamelCase
     end
   end
 
-  class ChildDefault < Shale::Mapper
-    attribute :one, Shale::Type::String
-    attribute :two, Shale::Type::String, default: -> { 'foobar' }
+  class ChildDefault < Fido::Mapper
+    attribute :one, Fido::Type::String
+    attribute :two, Fido::Type::String, default: -> { 'foobar' }
   end
 
-  class ParentDefault < Shale::Mapper
+  class ParentDefault < Fido::Mapper
     attribute :child, ChildDefault
 
     hsh do
@@ -137,21 +137,21 @@ module ComplexSpec__Delegation # rubocop:disable Naming/ClassAndModuleCamelCase
     end
   end
 
-  class ErrorAttributeNotDefined < Shale::Mapper
+  class ErrorAttributeNotDefined < Fido::Mapper
     hsh do
       map 'one', to: :one, receiver: :child
     end
   end
 
-  class ErrorNotAShaleMapper < Shale::Mapper
-    attribute :child, Shale::Type::String
+  class ErrorNotAFidoMapper < Fido::Mapper
+    attribute :child, Fido::Type::String
 
     hsh do
       map 'one', to: :one, receiver: :child
     end
   end
 
-  class ErrorNotACollection < Shale::Mapper
+  class ErrorNotACollection < Fido::Mapper
     attribute :child, Child, collection: true
 
     hsh do
@@ -160,13 +160,13 @@ module ComplexSpec__Delegation # rubocop:disable Naming/ClassAndModuleCamelCase
   end
 end
 
-RSpec.describe Shale::Type::Complex do
+RSpec.describe Fido::Type::Complex do
   before(:each) do
-    Shale.json_adapter = Shale::Adapter::JSON
-    Shale.yaml_adapter = YAML
-    Shale.toml_adapter = Tomlib
-    Shale.csv_adapter = Shale::Adapter::CSV
-    Shale.xml_adapter = Shale::Adapter::REXML
+    Fido.json_adapter = Fido::Adapter::JSON
+    Fido.yaml_adapter = YAML
+    Fido.toml_adapter = Tomlib
+    Fido.csv_adapter = Fido::Adapter::CSV
+    Fido.xml_adapter = Fido::Adapter::REXML
   end
 
   context 'with delegation' do
@@ -178,19 +178,19 @@ RSpec.describe Shale::Type::Complex do
 
         expect do
           parent.from_hash({ 'one' => 'one' })
-        end.to raise_error(Shale::AttributeNotDefinedError, msg)
+        end.to raise_error(Fido::AttributeNotDefinedError, msg)
       end
     end
 
-    context 'when receiver is not a descendant of Shale::Mapper' do
-      let(:parent) { ComplexSpec__Delegation::ErrorNotAShaleMapper }
+    context 'when receiver is not a descendant of Fido::Mapper' do
+      let(:parent) { ComplexSpec__Delegation::ErrorNotAFidoMapper }
 
       it 'raises an exception' do
-        msg = /attribute 'child' is not a descendant of Shale::Mapper type/
+        msg = /attribute 'child' is not a descendant of Fido::Mapper type/
 
         expect do
           parent.from_hash({ 'one' => 'one' })
-        end.to raise_error(Shale::NotAShaleMapperError, msg)
+        end.to raise_error(Fido::NotAFidoMapperError, msg)
       end
     end
 
@@ -202,7 +202,7 @@ RSpec.describe Shale::Type::Complex do
 
         expect do
           parent.from_hash({ 'one' => 'one' })
-        end.to raise_error(Shale::NotAShaleMapperError, msg)
+        end.to raise_error(Fido::NotAFidoMapperError, msg)
       end
     end
 

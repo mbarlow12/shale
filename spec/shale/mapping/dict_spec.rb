@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'shale/mapping/dict'
+require 'fido/mapping/dict'
 
-RSpec.describe Shale::Mapping::Dict do
+RSpec.describe Fido::Mapping::Dict do
   describe '#map' do
     context 'when :to and :using is nil' do
       it 'raises an error' do
@@ -10,7 +10,7 @@ RSpec.describe Shale::Mapping::Dict do
 
         expect do
           obj.map('foo')
-        end.to raise_error(Shale::IncorrectMappingArgumentsError)
+        end.to raise_error(Fido::IncorrectMappingArgumentsError)
       end
     end
 
@@ -41,7 +41,7 @@ RSpec.describe Shale::Mapping::Dict do
 
           expect do
             obj.map('foo', using: { to: :foo })
-          end.to raise_error(Shale::IncorrectMappingArgumentsError)
+          end.to raise_error(Fido::IncorrectMappingArgumentsError)
         end
       end
 
@@ -51,7 +51,7 @@ RSpec.describe Shale::Mapping::Dict do
 
           expect do
             obj.map('foo', using: { from: :foo })
-          end.to raise_error(Shale::IncorrectMappingArgumentsError)
+          end.to raise_error(Fido::IncorrectMappingArgumentsError)
         end
       end
 

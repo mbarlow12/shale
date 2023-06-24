@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require 'shale/mapping/descriptor/xml'
-require 'shale/mapping/descriptor/xml_namespace'
+require 'fido/mapping/descriptor/xml'
+require 'fido/mapping/descriptor/xml_namespace'
 
-RSpec.describe Shale::Mapping::Descriptor::Xml do
+RSpec.describe Fido::Mapping::Descriptor::Xml do
   describe '#initilize' do
     it 'delegates attributes to parent class' do
       obj = described_class.new(
@@ -28,7 +28,7 @@ RSpec.describe Shale::Mapping::Descriptor::Xml do
 
   describe '#namespace' do
     it 'returns namespace' do
-      nsp = Shale::Mapping::Descriptor::XmlNamespace.new
+      nsp = Fido::Mapping::Descriptor::XmlNamespace.new
 
       obj = described_class.new(
         name: 'foo',
@@ -71,7 +71,7 @@ RSpec.describe Shale::Mapping::Descriptor::Xml do
           receiver: nil,
           methods: nil,
           group: nil,
-          namespace: Shale::Mapping::Descriptor::XmlNamespace.new('http://bar.com', 'bar'),
+          namespace: Fido::Mapping::Descriptor::XmlNamespace.new('http://bar.com', 'bar'),
           cdata: false,
           render_nil: false
         )
@@ -88,7 +88,7 @@ RSpec.describe Shale::Mapping::Descriptor::Xml do
           receiver: nil,
           methods: nil,
           group: nil,
-          namespace: Shale::Mapping::Descriptor::XmlNamespace.new,
+          namespace: Fido::Mapping::Descriptor::XmlNamespace.new,
           cdata: false,
           render_nil: false
         )
@@ -107,7 +107,7 @@ RSpec.describe Shale::Mapping::Descriptor::Xml do
           receiver: nil,
           methods: nil,
           group: nil,
-          namespace: Shale::Mapping::Descriptor::XmlNamespace.new('http://bar.com', 'bar'),
+          namespace: Fido::Mapping::Descriptor::XmlNamespace.new('http://bar.com', 'bar'),
           cdata: false,
           render_nil: false
         )
@@ -124,7 +124,7 @@ RSpec.describe Shale::Mapping::Descriptor::Xml do
           receiver: nil,
           methods: nil,
           group: nil,
-          namespace: Shale::Mapping::Descriptor::XmlNamespace.new,
+          namespace: Fido::Mapping::Descriptor::XmlNamespace.new,
           cdata: false,
           render_nil: false
         )

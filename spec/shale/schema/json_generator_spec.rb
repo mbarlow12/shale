@@ -1,62 +1,62 @@
 # frozen_string_literal: true
 
-require 'shale/adapter/json'
-require 'shale/schema/json_generator'
-require 'shale/error'
+require 'fido/adapter/json'
+require 'fido/schema/json_generator'
+require 'fido/error'
 
-module ShaleSchemaJSONGeneratorTesting
-  class BranchOne < Shale::Mapper
-    attribute :one, Shale::Type::String
+module FidoSchemaJSONGeneratorTesting
+  class BranchOne < Fido::Mapper
+    attribute :one, Fido::Type::String
 
     json do
       map 'One', to: :one
     end
   end
 
-  class BranchTwo < Shale::Mapper
-    attribute :two, Shale::Type::String
+  class BranchTwo < Fido::Mapper
+    attribute :two, Fido::Type::String
 
     json do
       map 'Two', to: :two
     end
   end
 
-  class Root < Shale::Mapper
-    attribute :boolean, Shale::Type::Boolean
-    attribute :date, Shale::Type::Date
-    attribute :float, Shale::Type::Float
-    attribute :integer, Shale::Type::Integer
-    attribute :string, Shale::Type::String
-    attribute :time, Shale::Type::Time
-    attribute :value, Shale::Type::Value
+  class Root < Fido::Mapper
+    attribute :boolean, Fido::Type::Boolean
+    attribute :date, Fido::Type::Date
+    attribute :float, Fido::Type::Float
+    attribute :integer, Fido::Type::Integer
+    attribute :string, Fido::Type::String
+    attribute :time, Fido::Type::Time
+    attribute :value, Fido::Type::Value
 
-    attribute :boolean_default, Shale::Type::Boolean, default: -> { true }
-    attribute :date_default, Shale::Type::Date, default: -> { Date.new(2021, 1, 1) }
-    attribute :float_default, Shale::Type::Float, default: -> { 1.0 }
-    attribute :integer_default, Shale::Type::Integer, default: -> { 1 }
-    attribute :string_default, Shale::Type::String, default: -> { 'string' }
+    attribute :boolean_default, Fido::Type::Boolean, default: -> { true }
+    attribute :date_default, Fido::Type::Date, default: -> { Date.new(2021, 1, 1) }
+    attribute :float_default, Fido::Type::Float, default: -> { 1.0 }
+    attribute :integer_default, Fido::Type::Integer, default: -> { 1 }
+    attribute :string_default, Fido::Type::String, default: -> { 'string' }
     attribute :time_default,
-      Shale::Type::Time,
+      Fido::Type::Time,
       default: -> { Time.new(2021, 1, 1, 10, 10, 10, '+01:00') }
-    attribute :value_default, Shale::Type::Value, default: -> { 'value' }
+    attribute :value_default, Fido::Type::Value, default: -> { 'value' }
 
-    attribute :boolean_collection, Shale::Type::Boolean, collection: true
-    attribute :date_collection, Shale::Type::Date, collection: true
-    attribute :float_collection, Shale::Type::Float, collection: true
-    attribute :integer_collection, Shale::Type::Integer, collection: true
-    attribute :string_collection, Shale::Type::String, collection: true
-    attribute :time_collection, Shale::Type::Time, collection: true
-    attribute :value_collection, Shale::Type::Value, collection: true
+    attribute :boolean_collection, Fido::Type::Boolean, collection: true
+    attribute :date_collection, Fido::Type::Date, collection: true
+    attribute :float_collection, Fido::Type::Float, collection: true
+    attribute :integer_collection, Fido::Type::Integer, collection: true
+    attribute :string_collection, Fido::Type::String, collection: true
+    attribute :time_collection, Fido::Type::Time, collection: true
+    attribute :value_collection, Fido::Type::Value, collection: true
 
     attribute :branch_one, BranchOne
     attribute :branch_two, BranchTwo
     attribute :circular_dependency, Root
   end
 
-  class CircularDependencyB < Shale::Mapper
+  class CircularDependencyB < Fido::Mapper
   end
 
-  class CircularDependencyA < Shale::Mapper
+  class CircularDependencyA < Fido::Mapper
     attribute :circular_dependency_b, CircularDependencyB
   end
 
@@ -72,23 +72,23 @@ module ShaleSchemaJSONGeneratorTesting
     attr_accessor :first_name, :last_name, :address
   end
 
-  class AddressMapper < Shale::Mapper
+  class AddressMapper < Fido::Mapper
     model Address
-    attribute :street, Shale::Type::String
-    attribute :city, Shale::Type::String
+    attribute :street, Fido::Type::String
+    attribute :city, Fido::Type::String
   end
 
-  class PersonMapper < Shale::Mapper
+  class PersonMapper < Fido::Mapper
     model Person
-    attribute :first_name, Shale::Type::String
-    attribute :last_name, Shale::Type::String
+    attribute :first_name, Fido::Type::String
+    attribute :last_name, Fido::Type::String
     attribute :address, AddressMapper
   end
 end
 
-RSpec.describe Shale::Schema::JSONGenerator do
+RSpec.describe Fido::Schema::JSONGenerator do
   before(:each) do
-    Shale.json_adapter = Shale::Adapter::JSON
+    Fido.json_adapter = Fido::Adapter::JSON
   end
 
   let(:expected_schema_hash) do
@@ -97,9 +97,9 @@ RSpec.describe Shale::Schema::JSONGenerator do
       '$id' => 'My ID',
       'title' => 'My title',
       'description' => 'My description',
-      '$ref' => '#/$defs/ShaleSchemaJSONGeneratorTesting_Root',
+      '$ref' => '#/$defs/FidoSchemaJSONGeneratorTesting_Root',
       '$defs' => {
-        'ShaleSchemaJSONGeneratorTesting_BranchOne' => {
+        'FidoSchemaJSONGeneratorTesting_BranchOne' => {
           'type' => %w[object null],
           'properties' => {
             'One' => {
@@ -107,7 +107,7 @@ RSpec.describe Shale::Schema::JSONGenerator do
             },
           },
         },
-        'ShaleSchemaJSONGeneratorTesting_BranchTwo' => {
+        'FidoSchemaJSONGeneratorTesting_BranchTwo' => {
           'type' => %w[object null],
           'properties' => {
             'Two' => {
@@ -115,7 +115,7 @@ RSpec.describe Shale::Schema::JSONGenerator do
             },
           },
         },
-        'ShaleSchemaJSONGeneratorTesting_Root' => {
+        'FidoSchemaJSONGeneratorTesting_Root' => {
           'type' => 'object',
           'properties' => {
             'boolean' => {
@@ -200,13 +200,13 @@ RSpec.describe Shale::Schema::JSONGenerator do
               'items' => { 'type' => %w[boolean integer number object string] },
             },
             'branch_one' => {
-              '$ref' => '#/$defs/ShaleSchemaJSONGeneratorTesting_BranchOne',
+              '$ref' => '#/$defs/FidoSchemaJSONGeneratorTesting_BranchOne',
             },
             'branch_two' => {
-              '$ref' => '#/$defs/ShaleSchemaJSONGeneratorTesting_BranchTwo',
+              '$ref' => '#/$defs/FidoSchemaJSONGeneratorTesting_BranchTwo',
             },
             'circular_dependency' => {
-              '$ref' => '#/$defs/ShaleSchemaJSONGeneratorTesting_Root',
+              '$ref' => '#/$defs/FidoSchemaJSONGeneratorTesting_Root',
             },
           },
         },
@@ -217,21 +217,21 @@ RSpec.describe Shale::Schema::JSONGenerator do
   let(:expected_circular_schema_hash) do
     {
       '$schema' => 'https://json-schema.org/draft/2020-12/schema',
-      '$ref' => '#/$defs/ShaleSchemaJSONGeneratorTesting_CircularDependencyA',
+      '$ref' => '#/$defs/FidoSchemaJSONGeneratorTesting_CircularDependencyA',
       '$defs' => {
-        'ShaleSchemaJSONGeneratorTesting_CircularDependencyA' => {
+        'FidoSchemaJSONGeneratorTesting_CircularDependencyA' => {
           'type' => 'object',
           'properties' => {
             'circular_dependency_b' => {
-              '$ref' => '#/$defs/ShaleSchemaJSONGeneratorTesting_CircularDependencyB',
+              '$ref' => '#/$defs/FidoSchemaJSONGeneratorTesting_CircularDependencyB',
             },
           },
         },
-        'ShaleSchemaJSONGeneratorTesting_CircularDependencyB' => {
+        'FidoSchemaJSONGeneratorTesting_CircularDependencyB' => {
           'type' => %w[object null],
           'properties' => {
             'circular_dependency_a' => {
-              '$ref' => '#/$defs/ShaleSchemaJSONGeneratorTesting_CircularDependencyA',
+              '$ref' => '#/$defs/FidoSchemaJSONGeneratorTesting_CircularDependencyA',
             },
           },
         },
@@ -251,27 +251,27 @@ RSpec.describe Shale::Schema::JSONGenerator do
       it 'raises error' do
         expect do
           described_class.new.as_schema(String)
-        end.to raise_error(Shale::NotAShaleMapperError)
+        end.to raise_error(Fido::NotAFidoMapperError)
       end
     end
 
     context 'without id' do
       it 'generates schema without id' do
-        schema = described_class.new.as_schema(ShaleSchemaJSONGeneratorTesting::Root)
+        schema = described_class.new.as_schema(FidoSchemaJSONGeneratorTesting::Root)
         expect(schema['id']).to eq(nil)
       end
     end
 
     context 'without title' do
       it 'generates schema without title' do
-        schema = described_class.new.as_schema(ShaleSchemaJSONGeneratorTesting::Root)
+        schema = described_class.new.as_schema(FidoSchemaJSONGeneratorTesting::Root)
         expect(schema['title']).to eq(nil)
       end
     end
 
     context 'without description' do
       it 'generates schema without description' do
-        schema = described_class.new.as_schema(ShaleSchemaJSONGeneratorTesting::Root)
+        schema = described_class.new.as_schema(FidoSchemaJSONGeneratorTesting::Root)
         expect(schema['description']).to eq(nil)
       end
     end
@@ -279,7 +279,7 @@ RSpec.describe Shale::Schema::JSONGenerator do
     context 'with correct arguments' do
       it 'generates JSON schema' do
         schema = described_class.new.as_schema(
-          ShaleSchemaJSONGeneratorTesting::Root,
+          FidoSchemaJSONGeneratorTesting::Root,
           id: 'My ID',
           title: 'My title',
           description: 'My description'
@@ -292,7 +292,7 @@ RSpec.describe Shale::Schema::JSONGenerator do
     context 'with classes depending on each other' do
       it 'generates JSON schema' do
         schema = described_class.new.as_schema(
-          ShaleSchemaJSONGeneratorTesting::CircularDependencyA
+          FidoSchemaJSONGeneratorTesting::CircularDependencyA
         )
 
         expect(schema).to eq(expected_circular_schema_hash)
@@ -303,21 +303,21 @@ RSpec.describe Shale::Schema::JSONGenerator do
       let(:expected_schema) do
         {
           '$schema' => 'https://json-schema.org/draft/2020-12/schema',
-          '$ref' => '#/$defs/ShaleSchemaJSONGeneratorTesting_Person',
+          '$ref' => '#/$defs/FidoSchemaJSONGeneratorTesting_Person',
           '$defs' => {
-            'ShaleSchemaJSONGeneratorTesting_Address' => {
+            'FidoSchemaJSONGeneratorTesting_Address' => {
               'type' => %w[object null],
               'properties' => {
                 'street' => { 'type' => %w[string null] },
                 'city' => { 'type' => %w[string null] },
               },
             },
-            'ShaleSchemaJSONGeneratorTesting_Person' => {
+            'FidoSchemaJSONGeneratorTesting_Person' => {
               'type' => 'object',
               'properties' => {
                 'first_name' => { 'type' => %w[string null] },
                 'last_name' => { 'type' => %w[string null] },
-                'address' => { '$ref' => '#/$defs/ShaleSchemaJSONGeneratorTesting_Address' },
+                'address' => { '$ref' => '#/$defs/FidoSchemaJSONGeneratorTesting_Address' },
               },
             },
           },
@@ -326,7 +326,7 @@ RSpec.describe Shale::Schema::JSONGenerator do
 
       it 'generates JSON schema' do
         schema = described_class.new.as_schema(
-          ShaleSchemaJSONGeneratorTesting::PersonMapper
+          FidoSchemaJSONGeneratorTesting::PersonMapper
         )
 
         expect(schema).to eq(expected_schema)
@@ -338,27 +338,27 @@ RSpec.describe Shale::Schema::JSONGenerator do
     context 'with pretty param' do
       it 'genrates JSON document' do
         schema = described_class.new.to_schema(
-          ShaleSchemaJSONGeneratorTesting::Root,
+          FidoSchemaJSONGeneratorTesting::Root,
           id: 'My ID',
           title: 'My title',
           description: 'My description',
           pretty: true
         )
 
-        expect(schema).to eq(Shale.json_adapter.dump(expected_schema_hash, pretty: true))
+        expect(schema).to eq(Fido.json_adapter.dump(expected_schema_hash, pretty: true))
       end
     end
 
     context 'without pretty param' do
       it 'genrates JSON document' do
         schema = described_class.new.to_schema(
-          ShaleSchemaJSONGeneratorTesting::Root,
+          FidoSchemaJSONGeneratorTesting::Root,
           id: 'My ID',
           title: 'My title',
           description: 'My description'
         )
 
-        expect(schema).to eq(Shale.json_adapter.dump(expected_schema_hash))
+        expect(schema).to eq(Fido.json_adapter.dump(expected_schema_hash))
       end
     end
   end
