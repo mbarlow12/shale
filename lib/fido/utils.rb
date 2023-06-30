@@ -90,5 +90,33 @@ module Fido
       return nil if value.empty?
       value
     end
+
+    # Return a consistent string representation of the passed
+    # value. Ensures equivalent hashes or arrays, regardless of
+    # order are serialized to the same string.
+    #
+    # @param [any] schema
+    #
+    # @api private
+    def self.deep_serialize(schema, exclude: [])
+      sorter = ->(a, b) { a.to_s <=> b.to_s }
+      if schema.is_a? Hash
+        <<~HSH.chomp
+        {#{schema.except(*exclude)
+                 .keys
+                 .sort(&sorter)
+                 .map { |key| "#{key}:#{deep_serialize(schema[key])}" }
+                 .join(',')}}
+        HSH
+      elsif schema.is_a? Enumerable
+        <<~ENUM.chomp
+        [#{schema.map { |elem| deep_serialize(elem) }
+                 .sort(&sorter)
+                 .join(',')}]
+        ENUM
+      else
+        schema.inspect
+      end
+    end
   end
 end

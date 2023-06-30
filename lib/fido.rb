@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'yaml'
+require 'zeitwerk'
 
 require_relative 'fido/mapper'
 require_relative 'fido/adapter/csv'
@@ -151,6 +152,84 @@ module Fido
     # @api public
     def csv_adapter
       @csv_adapter || Adapter::CSV
+    end
+    
+
+    def self.loader
+      @loader ||= ::Zeitwerk::Loader.new.tap do |loader|
+        root = ::File.expand_path(__dir__)
+        loader.tag = 'fido'
+        loader.inflector = ::Zeitwerk::GemInflector.new(File.join(root, 'fido.rb'))
+        loader.inflector.inflect(
+          'idf' => 'IDF',
+          'json' => 'JSON',
+          'xml' => 'XML'
+        )
+        loader.push_dir(root)
+        loader.ignore(
+          "#{root}/fido.rb",
+          "#{root}"
+        )
+      end
+
+      def self.inflector
+        @inflector ||= Dry::Inflector.new do |inflections|
+
+        end
+      end
+    end
+  end
+
+  class ::Hash
+
+    def deep_transform_values(&block)
+      _deep_transform_object_values(self, &block)
+    end
+
+    def walk
+      stack = map { |key, value| [[key], value] }
+      until stack.empty?
+        keys, value = stack.shift
+        yield(keys, value)
+        if value.is_a?(Hash)
+          value.each { |sub_key, sub_value| stack.unshift([keys.dup << sub_key, sub_value])}
+        elsif value.is_a?(Enumerable)
+          value.each_with_index { |val, i| stack.unshift([keys.dup << i, val]) }
+        end
+      end
+    end
+  
+    def deep_merge(other)
+      merger = lambda { |_, val1, val2|
+        if val1.is_a?(Hash) && val2.is_a?(Hash)
+          val1.merge!(val2, &merger)
+        elsif val1.is_a?(Array) && val2.is_a?(Array)
+          val1 | val2
+        else
+          [:undefined, nil, :nil].include?(val2) ? val1 : val2
+        end
+      }
+      merge!(other.to_h, &merger)
+    end
+
+    def deep_dup
+      deep_transform_values(&:dup)
+    end
+
+    def deep_compare(other)
+      
+    end
+    
+    private
+    
+    def _deep_transform_object_values(obj, &block)
+      if obj.is_a? Hash
+        obj.transform_values { |val| _deep_transform_object_values(val, &block) }
+      elsif obj.is_a? Enumerable
+        obj.map { |val| _deep_transform_object_values(val, &block) }
+      else
+        yield(obj)
+      end
     end
   end
 end

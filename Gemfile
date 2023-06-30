@@ -19,3 +19,9 @@ group :test do
   gem 'simplecov', '~> 0.22.0', require: false
 end
 
+
+gem "thor", "~> 1.2"
+
+gem "dry-transformer", "~> 1.0"
+
+gem "hash_diff", "~> 1.1"

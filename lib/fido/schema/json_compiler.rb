@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'digest'
 require 'erb'
 require 'uri'
 
@@ -14,6 +15,7 @@ require_relative 'compiler/property'
 require_relative 'compiler/string'
 require_relative 'compiler/time'
 require_relative 'compiler/value'
+require_relative 'compiler/type_inference'
 
 module Fido
   module Schema
@@ -58,6 +60,8 @@ module Fido
         <%- end -%>
       TEMPLATE
 
+      include Compiler::TypeInference
+
       # Generate Fido models from JSON Schema and return them as a Ruby Array of objects
       #
       # @param [Array<String>] schemas
@@ -84,6 +88,10 @@ module Fido
 
         schemas.each do |schema|
           disassemble_schema(schema)
+        end
+
+        schemas.each do |schema|
+          reduce_refs(schema)
         end
 
         compile(schemas[0], true)
@@ -127,8 +135,6 @@ module Fido
           [type.file_name, MODEL_TEMPLATE.result(binding)]
         end
       end
-
-      private
 
       # Generate JSON Schema id
       #
@@ -191,52 +197,6 @@ module Fido
         end
       end
 
-      # Get Fido type from JSON Schema type
-      #
-      # @param [Hash, true, false, nil] schema
-      # @param [String] id
-      # @param [String] name
-      #
-      # @return [Fido::Schema::Compiler::Type]
-      #
-      # @api private
-      def infer_type(schema, id, name)
-        return unless schema
-        return Compiler::Value.new if schema == true
-
-        type = schema['type']
-        format = schema['format']
-
-        if type.is_a?(Array)
-          type -= ['null']
-
-          if type.length > 1
-            return Compiler::Value.new
-          else
-            type = type[0]
-          end
-        end
-
-        if type == 'object'
-          base_id = Utils.presence(id.split('#')[0])
-          Compiler::Complex.new(id, name, @namespace_mapping[base_id])
-        elsif type == 'string' && format == 'date'
-          Compiler::Date.new
-        elsif type == 'string' && format == 'date-time'
-          Compiler::Time.new
-        elsif type == 'string'
-          Compiler::String.new
-        elsif type == 'number'
-          Compiler::Float.new
-        elsif type == 'integer'
-          Compiler::Integer.new
-        elsif type == 'boolean'
-          Compiler::Boolean.new
-        else
-          Compiler::Value.new
-        end
-      end
-
       # Disassemble JSON schema into separate subschemas
       #
       # @param [String] schema
@@ -261,6 +221,11 @@ module Fido
         if @schema_repository.key?(pointer)
           raise SchemaError, "schema with id '#{pointer}' already exists"
         else
+          if can_be_referenced?(schema)
+            hash = encode_schema(schema)
+            @schema_hashes[hash] ||= []
+            @schema_hashes[hash] << pointer
+          end
           @schema_repository[pointer] = {
             id: pointer,
             key: schema_key,
@@ -270,9 +235,26 @@ module Fido
 
         return unless schema.is_a?(Hash)
 
-        ['properties', '$defs'].each do |definitions|
+        ['properties', 'patternProperties', '$defs'].each do |definitions|
           (schema[definitions] || {}).each do |subschema_key, subschema|
             disassemble_schema(subschema, [*fragment, definitions, subschema_key], id)
+          end
+        end
+      end
+      
+      def reduce_refs
+        # only consider the pointers to repeated schemas
+        @schema_hashes.select! { |_, v| v.length > 1 }
+      end
+
+      # Pull the defs structure from the @schema_repository
+      #   - add $ids?
+      def extract_defs
+        defs = @schema_hashes.each_with_object({}) do |(hash, pointers), memo|
+          pointers.each do |pointer|
+            entry = @schema_repository[pointer]
+            group = infer_schema_group(entry[:schema])
+            memo[hash] ||= { key: entry[:key], schema: entry[:schema].deep_dup }
           end
         end
       end

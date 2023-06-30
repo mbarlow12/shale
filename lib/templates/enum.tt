@@ -1,0 +1,15 @@
+# frozen_string_literal: true
+
+module Fido
+module Enum
+  module <%= class_name %>
+    class << self
+    <% properties.each do |property| %>
+      def <%= property.name.upcase %>
+        <%= property.value %>.freeze
+      end
+    <% end %>
+    end
+  end
+end
+end

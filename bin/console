@@ -3,25 +3,663 @@
 
 require 'bundler/setup'
 require 'fido'
+require 'fido/schema'
 require 'json'
 require 'irb'
+require 'dry/inflector'
+require 'dry/transformer'
+require 'digest'
+require 'ostruct'
+require 'hash_diff'
 
-def epjson
-  JSON.load_file!('energyplus.schema.epjson')['properties']
+
+class Tstr < Dry::Transformer::Pipe
+  import Dry::Transformer::Recursion
+  import Dry::Transformer::Conditional
+  import Dry::Transformer::HashTransformations
+
+  define! do
+    hash_recursion do
+      is Hash, -> s { s }
+      guard -> s { s.key? 'patternProperties' }, map_value('patternProperties', -> s { puts s })
+    end
+  end
 end
 
-class Hash
-  def walk
-    stack = map { |key, value| [[key], value] }
-    until stack.empty?
-      keys, value = stack.shift
-      yield(keys, value)
-      if value.is_a?(Hash)
-        value.each { |sub_key, sub_value| stack.unshift([keys.dup << sub_key, sub_value])}
-      elsif value.is_a?(Enumerable)
-        value.each_with_index { |val, i| stack.unshift([keys.dup << i, val]) }
+module Util
+  # Return a consistent string representation of the passed
+  # value. Ensures equivalent hashes or arrays, regardless of
+  # order are serialized to the same string.
+  #
+  # @param [any] schema
+  #
+  # @api private
+  def self.deep_serialize(schema, exclude: [])
+    sorter = ->(a, b) { a.to_s <=> b.to_s }
+    if schema.is_a? Hash
+      <<~HSH.chomp
+      {#{schema.except(*exclude)
+               .keys
+               .sort(&sorter)
+               .map { |key| "#{key}:#{deep_serialize(schema[key], exclude: exclude)}" }
+               .join(',')}}
+      HSH
+    elsif schema.is_a? Enumerable
+      <<~ENUM.chomp
+      [#{schema.map { |elem| deep_serialize(elem, exclude: exclude) }
+               .sort(&sorter)
+               .join(',')}]
+      ENUM
+    else
+      schema.inspect
+    end
+  end
+end
+
+def get_enums
+  json = f.epjson
+  enums = {}
+  json.walk do |keys, value|
+    if value.is_a?(Hash) && value.key?('enum')
+      hash = value['enum'].sort
+      enums[hash] ||= { vals: value['enum'], keys: []}
+      enums[hash][:keys] << keys
+    end
+  end
+  enums
+end
+
+module Fido
+  KEYS = OpenStruct.new ({
+    ENUM: 'enum',
+    OBJECTLIST: 'object_list',
+    OBJECT: 'object',
+    ARRAY: 'array',
+    ANYOF: 'anyOf',
+    STRING: 'string',
+    REFERENCE: 'reference',
+    NUMBER: 'number',
+    TYPE: 'type',
+    DEFAULT: 'default'
+  }).freeze
+
+  class << self
+    
+    attr_reader :content_index
+
+    def type_key
+      KEYS.TYPE
+    end
+
+    def complex_type_keys
+      [KEYS.OBJECT, KEYS.ARRAY]
+    end
+
+    def idf_keys
+      [KEYS.ENUM, KEYS.OBJECTLIST, KEYS.ANYOF, KEYS.REFERENCE, KEYS.DATATYPE]
+    end
+
+    # returns the key symbol
+    def coerce(type)
+      normalized = type.to_s.downcase.strip.gsub(/[^A-Za-z]+/, '').upcase.to_sym
+      raise "invalid type #{type}" unless KEYS.respond_to?(normalized)
+      
+      normalized
+    end
+
+    def refable?(schema)
+      return false unless schema.is_a?(Hash)
+
+      (schema.key?(type_key) && complex_type_keys.include?(type_key)) ||
+      idf_keys.any? { |key| schema.key?(key) }
+    end
+
+    def serialize_schema(schema)
+    end
+
+    def infer_schema_type(schema)
+      if enum?(schema)
+        KEYS.ENUM
+      elsif object_list?(schema)
+        KEYS.OBJECTLIST
+      elsif anyof?(schema)
+        KEYS.ANYOF
+      elsif schema.key?(type_key)
+        schema['type']
+      elsif schema.is_a?(Hash)
+        KEYS.DEFAULT
       end
     end
+    
+    def serialize_enum_schema(schema)
+      serialize_string_list(schema[KEYS.ENUM])
+    end
+
+    def serialize_object_list_schema(schema)
+      serialize_string_list(schema[KEYS.OBJECTLIST])
+    end
+
+    def serialize_object_schema(object_schema)
+      serialize_hash(object_schema['properties'])
+    end
+    
+    def serialize_string_schema(schema)
+      schema[type_key].to_s
+    end
+    def serialize_number_schema(schema)
+      schema[type_key].to_s
+    end
+    def serialize_array_schema(schema)
+      serialize_array(schema['items'])
+    end
+    
+    def serialize_anyof_schema(schema)
+      serialize_array(schema[KEYS.ANYOF])
+    end
+
+    def serialize_string_list(list)
+      "(#{list.sort.join(';')})"
+    end
+    
+    def serialize_array(list)
+      "[#{list.map { |item_schema| serialize_schema(item_schema) }.sort.join(',')}]"
+    end
+
+    def serialize_hash(schema)
+      exclude_keys = ['notes', 'note']
+      keys = schema.keys.reject { |key| exclude_keys.include?(key) }.sort { |a, b| a.to_s <=> b.to_s }
+      contents = keys.map { |key| [key, serialize_schema(schema[key])].join(':') }.join(',')
+      "{#{contents}}"
+    end
+    
+    alias serialize_default_schema serialize_hash
+
+    def create_schema_sha(schema)
+      type = infer_schema_type(schema)
+      raise "Unrecognized type for schema #{JSON.pretty_generate(schema)}" if type.nil?
+      
+      key = coerce(type)
+      method = "serialize_#{KEYS[key].downcase}_schema".to_sym
+      serialized = send(method, schema)
+      Digest::SHA256.hexdigest(serialized)
+    end
+
+    def infer_schema_name(group, pointer_list)
+    end
+
+    def epjson
+      @json_schema ||= JSON.load_file!('energyplus.schema.epjson')
+    end
+
+    def json_objs
+      epjson['properties']
+    end
+    
+    def empty_object
+      {
+        'type' => 'object',
+        'properties' => {}
+      }.dup
+    end
+    
+    def object_schema(*keys)
+      root_props = Hash.new { |hsh, key| hsh[key] = empty_object }
+      curr = root_props[keys.shift]['properties']
+      keys.each do |key|
+        curr[key] = empty_object
+        curr = curr[key]['properties']
+      end
+      empty_object.merge({'properties' => root_props})
+    end
+
+    def schema_index
+      @schema_index ||= create_schema_index(json_objs)
+    end
+
+    def decompose_schema(schema = nil)
+      schema ||= json_objs
+      @transformed = _t(:extract_props)[schema]
+      @schema_index = {}
+      @content_index = {}
+      lcl_groups = []
+      schema.walk do |keys, subschema|
+        sha = nil
+        if refable?(subschema)
+          sha = create_schema_sha(subschema)
+          @content_index[sha] ||= []
+          @content_index[sha] << keys
+        end
+
+        ptr = pointer(keys)
+        lcl_groups << subschema if keys.last
+        @schema_index[ptr] = {
+          id: ptr,
+          key: build_key(keys),
+          schema: subschema,
+          type: refable?(subschema) ? infer_schema_type(subschema) : nil,
+          sha: sha
+        }
+      end
+      @groups = lcl_groups.uniq.freeze
+    end
+
+    def enums
+      @schema_index.select { |ptr, entry| entry[:type] == KEYS.ENUM }
+                   .inject({}) do |memo, (ptr, entry)|
+                     next memo if entry[:sha].nil?
+
+                     memo[entry[:sha]] ||= { schema: entry[:schema], pointers: [] }
+                     memo[entry[:sha]][:pointers] << {pointer: ptr, key: entry[:key] }
+                     memo
+                   end
+    end
+
+    def resolve(*keys)
+      keys = keys.first if keys.length == 1 && keys.first.is_a?(Array)
+      
+      @schema_index[pointer(keys)]
+    end
+
+    def build_key(keys)
+      i = -1
+      i -= 1 if keys[i].is_a?(Numeric)
+      i -= 1 if ['anyOf'].include?(keys[i])
+      keys[i..].join('.')
+    end
+    
+    def pointer(keys)
+      keys.join('.').sub(/patternProperties.*properties\./, '')
+    end
+    
+    def create_schema_index(schema)
+      index = {}
+      schema.walk do |keys, subschema|
+        if can_be_referenced?(subschema)
+          hash = serialize_schema(subschema)
+          index[hash] ||= {type: infer_schema_type(subschema), keys: []}
+          index[hash][:keys] << keys
+          index[hash][:keys].sort { |a, b| (a.first + a.last.to_s) <=> (b.first + b.last.to_s)}
+        end
+      end
+      index
+    end
+
+    def create_defs
+      schema_index.select { |_, keys_list| keys_list.length > 1 }
+                  .each_with_object({}) do |(schema_hsh, keys_list), memo|
+                    schema = json_objs.dig(*keys_list.first)
+                    group = infer_schema_type(schema)
+                    name = infer_schema_name(group, key_list)
+                  end
+    end
+
+    def object_properties(schema)
+      extract_props = transform(:map_value, :patternProperties, -> val {val.values.first[:properties] }) >> transform(:rename_keys, patternProperties: :properties)
+      select_keys = transform(:accept_keys, [:properties])
+      unwrap = transform(:unwrap, :legacy_idd, [:fields, :extension, :extensibles])
+      nest_props = [:extensible_size, :min_fields, :fields, :extension, :extensibles, :group, :name]
+      nest = transform(:nest, :properties, nest_props)
+      fn = transform(:deep_symbolize_keys) >> extract_props >> unwrap >> nest >> select_keys
+      fn[schema]
+    end
+
+    def groups_to_defs
+      defs = group_data.values.inject({}) do |memo, grp_datum|
+        key = ['group', *grp_datum[:dirs]].join('/')
+        memo.merge({ key => empty_object })
+      end
+      { '$defs' => defs }
+    end
+
+    def groups
+      return @groups unless @groups.nil?
+
+      @groups = []
+      epjson['properties'].walk do |keys, value|
+        @groups << value if keys.last == 'group'
+      end
+      @groups = @groups.uniq.freeze
+      @groups
+    end
+
+    def group_data
+      @group_data ||= transform_group_data(groups)
+    end
+    
+    def transform_group_data(grps)
+      group_paths(grps).transform_values { |v| single_group_data(v) }
+    end
+    
+    def group_paths(grps)
+      prefixes = prefixes_from_groups(grps)
+      regularize_groups(grps).transform_values do |group_name|
+        prefix = prefixes.find { |pfx| group_name.start_with?("#{pfx}_") }
+        if prefix.nil?
+          [group_name]
+        else
+          group_name.sub("#{prefix}_", "#{prefix}::").split('::')
+        end
+      end
+    end
+
+    def regularized_groups
+      @regularized_groups ||= regularize_groups(self.groups)
+    end
+
+    def regularize_groups(grps)
+      return regularized_groups if grps.nil?
+      
+      grps.inject({}) do |mem, grp|
+        mem.merge({grp => regularize_group(grp)})
+      end
+    end
+    
+    def group_prefixes
+      @group_prefixes ||= prefixes_from_groups(self.groups)
+    end
+
+    def prefixes_from_groups(grps)
+      reg_groups = grps.map { |grp| regularize_group(grp) }.sort
+      prefixes, = reg_groups.inject([[], reg_groups[1..]]) do |(prefs, rest), grp|
+                              parts = grp.split('_')
+                              i = -1
+                              until rest.filter(&prefixed_by(parts[..(i+=1)])).empty?; end
+                              prefs << parts[...i].join('_') if i > 0
+                              [prefs.uniq, rest[1..] || []]
+                            end
+      prefixes
+    end
+
+    def prefixed_by(parts)
+        (->(pts) { -> name { name.start_with?("#{pts.join('_')}_") } }).call(parts)
+    end
+
+    def regularize_group(group_name)
+      group_name.gsub('-', '').gsub(/\s+/, '_').gsub(/\W+/, '').gsub(/_(?=[A-Z]+_)/, '')
+    end
+
+    def single_group_data(group_name)
+      converter = ->(name, fn) { name.map { |part| inflector.send(fn, part) } }
+      {
+        dirs: converter.call(group_name, :underscore),
+        modules: converter.call(group_name, :camelize)
+      }
+    end
+
+    def inflector
+      @inflector ||= Dry::Inflector.new do |inflections|
+        inflections.acronym "EMS", "EP", "DSL", "JSON", "IDF"
+      end
+    end
+    
+    def transform(*args)
+      Transforms[*args]
+    end
+    alias _t transform
+
+    def compiler
+      @compiler ||= Fido::Schema::JSONCompiler.new
+    end
+    
+    KEYS.to_h.keys.each do |k|
+      class_eval(<<-RUBY, __FILE__, __LINE__ + 1)
+        def #{KEYS[k].downcase}?(schema)
+          schema.key?('#{KEYS[k]}') || (schema.key?(type_key) && schema[type_key] == '#{KEYS[k]}')
+        end
+      RUBY
+    end
+  end
+end
+
+def f
+  Fido
+end
+
+
+# class Hash
+#   def walk
+#     stack = map { |key, value| [[key], value] }
+#     until stack.empty?
+#       keys, value = stack.shift
+#       yield(keys, value)
+#       if value.is_a?(Hash)
+#         value.each { |sub_key, sub_value| stack.unshift([keys.dup << sub_key, sub_value])}
+#       elsif value.is_a?(Enumerable)
+#         value.each_with_index { |val, i| stack.unshift([keys.dup << i, val]) }
+#       end
+#     end
+#   end
+# end
+module Transforms
+  extend Dry::Transformer::Registry
+
+  import Dry::Transformer::HashTransformations
+  import Dry::Transformer::ArrayTransformations
+  import Dry::Transformer::Recursion
+  import Dry::Transformer::Conditional
+  
+  class << self
+    def schema_keys
+      OpenStruct.new({
+        name: 'name',
+        group: 'group',
+        properties: 'properties',
+        fields: 'fields',
+        extensibles: 'extensibles',
+        extension: 'extension',
+        min_fields: 'min_fields',
+        extensible_size: 'extensible_size',
+        pattern_properties: 'patternProperties'
+      }).freeze
+    end
+    
+    def transform_object(schema)
+      _t(:hash_recursion, )
+    end
+    
+    def if_string(value, fn)
+      guard[value, lambdas.is_string, fn]
+    end
+    
+    def if_has_key(value, key, fn)
+      predicate = __lambdas.has_key[key]
+      with_hash_guard(guard[value, predicate, fn])
+    end
+    
+    def with_guard(value, predicate)
+      fetch(:guard)[value, predicate, lambdas.identity]
+    end
+
+    def unwrap_props
+      _t(:unwrap, 'properties')
+    end
+
+    def extract_props(value)
+      guarded = and_guards(hash_guard, lambdas.has_key[schema_keys.pattern_properties])
+      fn_chain = chain(
+        handle_pattern_props,
+        legacy_idd,
+        final_keys
+      )
+      _t(:hash_recursion, guarded[fn_chain])[value]
+    end
+
+    def chain(*fns)
+      first, *rest = fns
+      rest.inject(first, :>>)
+    end
+
+    def legacy_idd
+      extract('fields', 'extension', 'extensibles', from: 'legacy_idd')
+    end
+
+    def extract(*keys, from:, exclude_root: true)
+      fns = [_t(:map_value, from, _t(:accept_keys, keys))]
+      fns << _t(:unwrap, from) if exclude_root
+      chain(*fns)
+    end
+
+    def accept(*keys)
+      _t(:accept_keys, keys)
+    end
+
+    def final_keys
+      accept('name', 'group', 'properties', 'fields', 'extensibles', 'extension', 'min_fields', 'extensible_size')
+    end
+    
+    def _compose(first ,*fns)
+      fns.inject(first, :>>)
+    end
+    
+    alias _t t
+
+    def has_key(key)
+      -> val { val.key? key }
+    end
+
+    def has_key_guard(key, fn: -> s { s })
+      _t(:guard, has_key(key), fn)
+    end
+    
+    def nest_under(*subkeys, under:)
+      _t(:nest, under, subkeys)
+    end
+
+    def extract_pattern_props
+      extract('properties', from: schema_keys.pattern_properties)
+    end
+    
+    def handle_pattern_props
+      inner_fn = chain(first_value, nest_under('required', under: 'properties'), accept('properties'))
+      _t(:map_value, schema_keys.pattern_properties, inner_fn) >> extract_pattern_props
+    end
+
+    def first_value
+    _t(-> s { s.values.first } )
+    end
+    
+    def first_and_nest
+      first_value >> next_required
+    end
+
+    def hash_guard
+      Dry::Transformer::Recursion::IF_HASH
+    end
+    
+    def with_hash_guard(fn)
+      Dry::Transformer::Recursion::IF_HASH[fn]
+    end
+    
+    def pattern_props_guard(fn)
+      with_hash_guard(__guard(__lambdas.has_pattern_props))[fn]
+    end
+
+    def lambdas
+      @lambdas ||= OpenStruct.new({
+        identity: -> v { v },
+        has_key: -> key { -> val { val.key?(key) } },
+        is_string: -> val { val.is_a?(String) },
+        first_hash_value: -> schema { schema.values.first }
+      }).freeze
+    end
+    
+    def and_guards(*predicates)
+      combine_guards(predicates, op: :and)
+    end
+
+    def or_guards(*predicates)
+      combine_guards(predicates, op: :or)
+    end
+
+    def combine_guards(predicates, op:)
+      first, *rest = predicates
+      final = -> value do 
+        initial = first[value]
+        rest.inject(initial) do |comb, pred|
+          return false if !comb
+
+          result = pred[value]
+          op == :and ? comb && result : comb || result
+        end
+      end
+      -> fn { _t(:guard, -> val { final[val] }, fn) }
+    end
+    
+    def recursive_guard(*predicates)
+      wrapper = -> outer { -> inner { _t(:guard, outer, inner) } }
+      first = wrapper[predicates.pop]
+      predicates.reverse.inject(first) { |partial, pred| wrapper[pred[partial]] }
+    end
+    
+    private
+    
+    def __guard
+      fetch(:guard)
+    end
+    alias _g __guard
+  end
+end
+
+def mt(*args)
+  Transforms[*args]
+end
+
+=begin
+goal: 
+start with {
+  'properties': {
+    'Zone': {
+      'patternProperties': {
+        '*.$': {
+          'properties': {
+            ...
+          }
+        }
+      },
+      'group': '',
+      'name': '',
+      'legacy_idd': '',
+    }
+  }
+}
+=end
+
+class Transformer
+  # hash of group_name => array of objects
+  attr_reader :groups
+  attr_reader :class_directory_index
+  def initialize(schema)
+    @__schema_raw = schema
+    @inflector = Dry::Inflector.new
+  end
+  
+  def decompose_schema(schema)
+    schema => {
+      patternProperties: pattern_props,
+      extensible_size: ext_size,
+      min_fields:,
+      legacy_idd: { fields:, extension:, extensibles: },
+      group:,
+      name:,
+      **rest
+    }
+  end
+
+  def transform_object_def(schema)
+    schema => {
+      patternProperties: pattern_props,
+      extensible_size: ext_size,
+      min_fields:,
+      legacy_idd: { fields:, extension:, extensibles: },
+      group:,
+      name:
+    }
+    pattern_props.values.first.merge({
+      
+    })
+  end
+  
+  def object_keys
   end
 end
 
@@ -36,4 +674,46 @@ def get_enum_parents(schema)
   end
   parents.transform_values { |props| props.uniq.sort }
 end
+
+def schema_repo(compiler)
+  compiler.instance_variable_get(:@schema_repository)
+end
+
+def init(comp)
+  comp.instance_variable_set(:@root_name, nil)
+  comp.instance_variable_set(:@namespace_mapping, {})
+  comp.instance_variable_set(:@schema_repository, {})
+  comp.instance_variable_set(:@types, [])
+end
+
+def newcomp
+  Fido::Schema::JSONCompiler.new
+end
+
+def prep(hsh)
+  hsh.each_with_object([]) do |(k, v), memo|
+    obj = { '$id' => k.gsub(':', '/') }.merge(v)
+    memo << obj
+  end
+end
+
+def test_objs(schema)
+  schema.select { |k,| [/buildingsurface:detailed/i, /^plantloop/i].any? {|re| re.match?(k)}}
+end
+
+def schema_repo_hashes(comp)
+  repo = schema_repo(comp)
+  repo.each_with_object({}) do |(pointer, entry), memo|
+    h = entry[:hash]
+    unless h.nil?
+      memo[h] ||= []
+      memo[h] << [entry[:key], pointer]
+    end
+  end
+end
+
+def main
+  f.decompose_schema(f.json_objs)
+end
+
 IRB.start(__FILE__)
